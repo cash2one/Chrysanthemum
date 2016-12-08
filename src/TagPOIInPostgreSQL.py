@@ -18,16 +18,17 @@ import psycopg2.extras
 import pprint
 
 # insert tbl_cp_tag
+# conn connection to the database
 # cursor a db table cursor
 # data tuple
-def insertCPTag(cursor, data):
+def insertCPTag(conn, cursor, data):
 	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id,"\
 		" ref_area_code) VALUES(%(ref_cp_code)s, "\
 		"%(ref_tag_definition_id)s, %(ref_area_code)s)"
 
-	cpTagCursor.executemany(cpTagSQL, cpTagDict)
+	cursor.executemany(cpTagSQL, data)
 	conn.commit() # commit the operation, or it wont take effect
-	print len(data), cpTagCursor.statusmessage
+	print len(data), cursor.statusmessage
 
 	return True
 
@@ -69,7 +70,7 @@ def main():
 			}
 			cpTagDict.append(tmpDict)
 
-		insertCPTag(cpTagCursor, tuple(cpTagDict))
+		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
 		# cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id,"\
 		# 	" ref_area_code) VALUES(%(ref_cp_code)s, "\
 		# 	"%(ref_tag_definition_id)s, %(ref_area_code)s)"
