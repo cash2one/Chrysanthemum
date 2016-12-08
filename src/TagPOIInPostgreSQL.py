@@ -32,6 +32,22 @@ def insertCPTag(conn, cursor, data):
 
 	return True
 
+# insert tbl_cp_tag_result
+# conn connection to the database
+# cursor a db table cursor
+# data tuple
+def insertCPTagResult(conn, cursor, data):
+	cpTagResSQL = "INSERT INTO tbl_cp_tag_result(ref_cp_code, "\
+		"ref_tag_type_code, tag_name, tag_value, ref_area_code) "\
+		"VALUES(%(ref_cp_code)s, %(ref_tag_type_code)s, %(tag_name)s, "\
+		"%(tag_value)s, %(ref_area_code)s)"
+
+	cursor.executemany(cpTagResSQL, data)
+	conn.commit()
+	print len(data), cursor.statusmessage
+
+	return True
+
 def main():
 	#Define our connection string
 	conn_string = "host='192.168.0.21' dbname='jmtool3_1206_i'"\
@@ -48,20 +64,23 @@ def main():
 	# conn.cursor will return a cursor object, you can use this
 	# cursor to perform queries
 	tagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	tagDefCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpPropCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 	# id, name, pid, node_type, ref_tag_type_code
-	tagCursor.execute("SELECT * FROM tbl_tag_definition")
+	tagCursor.execute("SELECT * FROM tbl_tag_definition WHERE node_type = 'PROP_VALUE'")
 	for tagRow in tagCursor:
 		# 根据tag 的name在tbl_cp_prop, tbl_cp里面搜索
 		# id, ref_cp_code, ref_cptype_code, point_name, floor_number
-		cpPropSQL = "SELECT cp.point_code, cp.ref_area_code FROM "\
+		cpPropSQL = "SELECT cp.ref_area_code, cp.point_code, cp.ref_area_code FROM "\
 			"tbl_cp_prop prop INNER JOIN tbl_cp cp "\
 			"ON prop.ref_cp_code = cp.point_code WHERE prop.point_name LIKE "\
 			" '%" + tagRow['name'] + "%'"
 		cpPropCursor.execute(cpPropSQL)
 		cpTagDict = []
+		cpTagResDict = []
 		for cpPropRow in cpPropCursor:
 			tmpDict = {
 				'ref_cp_code': cpPropRow['point_code'],
@@ -70,13 +89,26 @@ def main():
 			}
 			cpTagDict.append(tmpDict)
 
+			# 根据tagRow里面的pid选出父亲结点作为tag_name
+			tag_name = None
+			tagDefCursor.execute("SELECT * FROM tbl_tag_definition WHERE "\
+				"pid < " + str(tagRow['pid']) + " ORDER BY pid DESC LIMIT 1")
+			rtv = tagDefCursor.fetchone()
+			if rtv is not None:
+				tag_name = rtv['name']
+
+			tmpCPTagResDict = {
+				'ref_cp_code': cpPropRow['point_code'],
+				'ref_tag_type_code': tagRow['ref_tag_type_code'],
+				'tag_name': tag_name,
+				'tag_value': tagRow['name'],
+				'ref_area_code': cpPropRow['ref_area_code']
+			}
+			cpTagResDict.append(tmpCPTagResDict)
+
+		# do the real insertion here, comment out for testing
 		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-		# cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id,"\
-		# 	" ref_area_code) VALUES(%(ref_cp_code)s, "\
-		# 	"%(ref_tag_definition_id)s, %(ref_area_code)s)"
-		# cpTagCursor.executemany(cpTagSQL, tuple(cpTagDict))
-		# conn.commit() # commit the operation, or it wont take effect
-		# print len(cpTagDict), cpTagCursor.statusmessage
+		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 	conn.close()
 	print 'Done'
