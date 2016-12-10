@@ -30,8 +30,8 @@ import sys
 # cursor a db table cursor
 # data tuple
 def insertCPTag(conn, cursor, data):
-	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id,"\
-		" ref_area_code) VALUES(%(ref_cp_code)s, "\
+	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id, ref_area_code"\
+		") VALUES(%(ref_cp_code)s, "\
 		"%(ref_tag_definition_id)s, %(ref_area_code)s)"
 
 	cursor.executemany(cpTagSQL, data)
@@ -72,6 +72,17 @@ def getTagName(conn, cursor, pid):
 
 	return tag_name
 
+# getRefAreaCode
+# 根据ref_cp_code获取ref_area_code
+# conn connection to the database
+# cursor a db table cursor
+# ref_cp_code
+def getRefAreaCode(conn, cursor, ref_cp_code):
+	sql = "SELECT ref_area_code FROM tbl_cp WHERE point_code = '" + ref_cp_code + "' LIMIT 1"
+	cursor.execute(sql)
+	rtv = cursor.fetchone()
+	return rtv['ref_area_code']
+
 def main():
 	#Define our connection string
 	conn_string = "host='192.168.0.21' dbname='jmtool3_1206_i'"\
@@ -89,6 +100,7 @@ def main():
 	# cursor to perform queries
 	tagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	tagDefCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cpCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpPropCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -98,72 +110,69 @@ def main():
 	for tagRow in tagCursor:
 		# 根据tag 的name在tbl_cp_prop, tbl_cp里面搜索
 		# id, ref_cp_code, ref_cptype_code, point_name, floor_number
-		cpPropCountSQL = "SELECT COUNT(*) FROM tbl_cp_prop prop INNER JOIN tbl_cp cp"\
-			" ON prop.ref_cp_code = cp.point_code WHERE prop.point_name LIKE "\
-			" '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE '%HOSPITAL%'"
-		cpPropCursor.execute(cpPropCountSQL)
-		if int(cpPropCursor.fetchone()[0]) > 0:
-			cpPropSQL = "SELECT cp.ref_area_code, cp.point_code, cp.ref_area_code FROM "\
-			"tbl_cp_prop prop INNER JOIN tbl_cp cp "\
-			"ON prop.ref_cp_code = cp.point_code WHERE prop.point_name LIKE "\
-			" '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE '%HOSPITAL%'"
-			cpPropCursor.execute(cpPropSQL)
-			cpTagDict = []
-			cpTagResDict = []
-			for cpPropRow in cpPropCursor:
-				tmpDict = {
-					'ref_cp_code': cpPropRow['point_code'],
-					'ref_tag_definition_id': tagRow['id'],
-					'ref_area_code': cpPropRow['ref_area_code']
-				}
-				cpTagDict.append(tmpDict)
+		cpPropSQL = "SELECT cp.ref_area_code, cp.point_code, cp.ref_area_code FROM "\
+		"tbl_cp_prop prop INNER JOIN tbl_cp cp "\
+		"ON prop.ref_cp_code = cp.point_code WHERE prop.point_name LIKE "\
+		" '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE '%HOSPITAL%'"
+		cpPropCursor.execute(cpPropSQL)
+		cpTagDict = []
+		cpTagResDict = []
+		for cpPropRow in cpPropCursor:
+			tmpDict = {
+				'ref_cp_code': cpPropRow['point_code'],
+				'ref_tag_definition_id': tagRow['id'],
+				'ref_area_code': cpPropRow['ref_area_code']
+			}
+			cpTagDict.append(tmpDict)
 
-				# 根据tagRow里面的pid选出父亲结点作为tag_name
-				tmpCPTagResDict = {
-					'ref_cp_code': cpPropRow['point_code'],
-					'ref_tag_type_code': tagRow['ref_tag_type_code'],
-					'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
-					'tag_value': tagRow['name'],
-					'ref_area_code': cpPropRow['ref_area_code']
-				}
-				cpTagResDict.append(tmpCPTagResDict)
+			# 根据tagRow里面的pid选出父亲结点作为tag_name
+			tmpCPTagResDict = {
+				'ref_cp_code': cpPropRow['point_code'],
+				'ref_tag_type_code': tagRow['ref_tag_type_code'],
+				'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
+				'tag_value': tagRow['name'],
+				'ref_area_code': cpPropRow['ref_area_code']
+			}
+			cpTagResDict.append(tmpCPTagResDict)
 
-			# do the real insertion here, comment out for testing
-			insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-			insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
-		else:
-			cpPropSQL = "SELECT cp.ref_area_code, cp.point_code FROM tbl_cp cp "\
-				"INNER JOIN tbl_cp_exprop ex ON cp.point_code = ex.ref_cp_code"\
-				" INNER JOIN tbl_cp_prop prop ON prop.ref_cp_code = cp.point_code "\
-				"WHERE ex.prop_value LIKE '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE '%HOSPITAL%'"
+		# do the real insertion here, comment out for testing
+		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
+		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
-			cpPropCursor.execute(cpPropSQL)
-			cpTagDict = []
-			cpTagResDict = []
-			for cpPropRow in cpPropCursor:
-				tmpDict = {
-					'ref_cp_code': cpPropRow['point_code'],
-					'ref_tag_definition_id': tagRow['id'],
-					'ref_area_code': cpPropRow['ref_area_code']
-				}
-				if tmpDict['ref_cp_code'] == 'CP-NMP-BJ10-CPQ-BJXTSYY869-20043-t1':
-					print cpPropRow
-					sys.exit(1)
+		# 根据tag的name字段在tbl_cp_exprop里面搜索
+		cpExPropSQL = "SELECT ref_cp_code FROM tbl_cp_exprop WHERE ref_cp_code "\
+			" NOT IN (SELECT ref_cp_code FROM tbl_cp_tag) AND prop_value LIKE "\
+			" '%" + tagRow['name'] + "%'"
 
-				cpTagDict.append(tmpDict)
+		# cpPropSQL = "SELECT cp.ref_area_code, cp.point_code FROM tbl_cp cp "\
+		# 	"INNER JOIN tbl_cp_exprop ex ON cp.point_code = ex.ref_cp_code"\
+		# 	" INNER JOIN tbl_cp_prop prop ON prop.ref_cp_code = cp.point_code "\
+		# 	"WHERE ex.prop_value LIKE '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE '%HOSPITAL%'"
 
-				# 根据tagRow里面的pid选出f父节点作为tag_name
-				tmpCPTagResDict = {
-					'ref_cp_code': cpPropRow['point_code'],
-					'ref_tag_type_code': tagRow['ref_tag_type_code'],
-					'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
-					'tag_value': tagRow['name'],
-					'ref_area_code': cpPropRow['ref_area_code']
-				}
-				cpTagResDict.append(tmpCPTagResDict)
+		cpPropCursor.execute(cpExPropSQL)
+		cpTagDict = []
+		cpTagResDict = []
+		for cpPropRow in cpPropCursor:
+			tmpDict = {
+				'ref_cp_code': cpPropRow['ref_cp_code'],
+				'ref_tag_definition_id': tagRow['id'],
+				'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
+			}
 
-			# insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-			# insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
+			cpTagDict.append(tmpDict)
+
+			# 根据tagRow里面的pid选出f父节点作为tag_name
+			tmpCPTagResDict = {
+				'ref_cp_code': cpPropRow['ref_cp_code'],
+				'ref_tag_type_code': tagRow['ref_tag_type_code'],
+				'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
+				'tag_value': tagRow['name'],
+				'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
+			}
+			cpTagResDict.append(tmpCPTagResDict)
+
+		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
+		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 	conn.close()
 	print 'Done'
