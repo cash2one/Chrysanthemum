@@ -23,6 +23,7 @@
 import psycopg2
 import psycopg2.extras
 import pprint
+import sys
 
 # insert tbl_cp_tag
 # conn connection to the database
@@ -145,6 +146,10 @@ def main():
 					'ref_tag_definition_id': tagRow['id'],
 					'ref_area_code': cpPropRow['ref_area_code']
 				}
+				if tmpDict['ref_cp_code'] == 'CP-NMP-BJ10-CPQ-BJXTSYY869-20043-t1':
+					print cpPropRow
+					sys.exit(1)
+
 				cpTagDict.append(tmpDict)
 
 				# 根据tagRow里面的pid选出f父节点作为tag_name
@@ -157,8 +162,8 @@ def main():
 				}
 				cpTagResDict.append(tmpCPTagResDict)
 
-			insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-			insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
+			# insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
+			# insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 	conn.close()
 	print 'Done'
