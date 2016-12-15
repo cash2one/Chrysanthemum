@@ -30,9 +30,9 @@ import sys
 # cursor a db table cursor
 # data tuple
 def insertCPTag(conn, cursor, data):
-	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id, ref_area_code"\
+	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id, ref_area_code, ref_brand_code"\
 		") VALUES(%(ref_cp_code)s, "\
-		"%(ref_tag_definition_id)s, %(ref_area_code)s)"
+		"%(ref_tag_definition_id)s, %(ref_area_code)s, %(ref_brand_code)s)"
 
 	cursor.executemany(cpTagSQL, data)
 	conn.commit() # commit the operation, or it wont take effect
@@ -52,7 +52,7 @@ def insertCPTagResult(conn, cursor, data):
 
 	cursor.executemany(cpTagResSQL, data)
 	conn.commit()
-	print len(data), cursor.statusmessage
+	# print len(data), cursor.statusmessage
 
 	return True
 
@@ -90,8 +90,8 @@ def getRefAreaCode(conn, cursor, ref_cp_code):
 # keyword like 格力空调
 # industry like AT-JIADIAN
 def getBrandCode(conn, cursor, keyword, industry):
-	sql = "SELECT brand_code FROM tbl_brand WHERE ref_area_type_code = 'AT-'"
-		+ industry + " AND chinese_name != '' AND " + keyword " ~ chinese_name"
+	sql = "SELECT brand_code FROM tbl_brand WHERE ref_area_type_code = 'AT-'"\
+		+ industry + " AND chinese_name != '' AND " + keyword + " ~ chinese_name"\
 		+ " OR english_name != '' AND " + keyword + " ~ english_name LIMIT 1"
 	cursor.execute(sql)
 	rtv = cursor.fetchone()
@@ -140,7 +140,7 @@ def main():
 				'ref_cp_code': cpPropRow['point_code'],
 				'ref_tag_definition_id': tagRow['id'],
 				'ref_area_code': cpPropRow['ref_area_code'],
-				'ref_brand_code': getBrandCode(conn, brandCursor, tagRow['point_name'], 'JIADIAN')
+				'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'JIADIAN')
 			}
 			cpTagDict.append(tmpDict)
 
