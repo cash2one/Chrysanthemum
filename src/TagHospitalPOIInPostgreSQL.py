@@ -155,8 +155,10 @@ def main():
 			cpTagResDict.append(tmpCPTagResDict)
 
 		# do the real insertion here, comment out for testing
-		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
+		if len(cpTagDict) != 0:
+			counter = counter + len(cpTagDict)
+			insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
+			insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 		# 根据tag的name字段在tbl_cp_exprop里面搜索
 		cpExPropSQL = "SELECT ref_cp_code FROM tbl_cp_exprop WHERE ref_cp_code "\
@@ -193,8 +195,10 @@ def main():
 			else:
 				continue
 
-		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
+		if len(cpTagDict) != 0:
+			counter = counter + len(cpTagDict)
+			insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
+			insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 	conn.close()
 	print 'Done', counter
