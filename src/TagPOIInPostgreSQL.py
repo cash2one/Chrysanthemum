@@ -52,7 +52,7 @@ def insertCPTagResult(conn, cursor, data):
 
 	cursor.executemany(cpTagResSQL, data)
 	conn.commit()
-	print len(data), cursor.statusmessage
+	# print len(data), cursor.statusmessage
 
 	return True
 
@@ -83,7 +83,25 @@ def getRefAreaCode(conn, cursor, ref_cp_code):
 	rtv = cursor.fetchone()
 	return rtv['ref_area_code']
 
+# isCPType
+# 查看采集点是否属于某一种类型
+# conn connection to the database
+# cursor a db table cursor
+# ref_cp_code
+# type
+def isCPType(conn, cursor, ref_cp_code, type):
+	sql = "SELECT count(*) FROM tbl_cp_prop WHERE ref_cp_code = '" + ref_cp_code + "' AND ref_cptype_code LIKE 'CP-" + type + "%' LIMIT 1"
+	cursor.execute(sql)
+	rtv = cursor.fetchone()
+	if rtv:
+		return True
+	else:
+		return False
+
 def main():
+	# 记录标记了多少采集点
+	counter = 0
+
 	#Define our connection string
 	conn_string = "host='192.168.0.21' dbname='jmtool3_1206_i'"\
 		+ " user='postgres' password='postgres'"
@@ -102,6 +120,7 @@ def main():
 	tagDefCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpPropCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cpProp1Cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -153,29 +172,32 @@ def main():
 		cpTagDict = []
 		cpTagResDict = []
 		for cpPropRow in cpPropCursor:
-			tmpDict = {
-				'ref_cp_code': cpPropRow['ref_cp_code'],
-				'ref_tag_definition_id': tagRow['id'],
-				'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
-			}
+			if isCPType(conn, cpProp1Cursor, cpPropRow['ref_cp_code'], 'HOSPITAL'):
+				tmpDict = {
+					'ref_cp_code': cpPropRow['ref_cp_code'],
+					'ref_tag_definition_id': tagRow['id'],
+					'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
+				}
 
-			cpTagDict.append(tmpDict)
+				cpTagDict.append(tmpDict)
 
-			# 根据tagRow里面的pid选出f父节点作为tag_name
-			tmpCPTagResDict = {
-				'ref_cp_code': cpPropRow['ref_cp_code'],
-				'ref_tag_type_code': tagRow['ref_tag_type_code'],
-				'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
-				'tag_value': tagRow['name'],
-				'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
-			}
-			cpTagResDict.append(tmpCPTagResDict)
+				# 根据tagRow里面的pid选出f父节点作为tag_name
+				tmpCPTagResDict = {
+					'ref_cp_code': cpPropRow['ref_cp_code'],
+					'ref_tag_type_code': tagRow['ref_tag_type_code'],
+					'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
+					'tag_value': tagRow['name'],
+					'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
+				}
+				cpTagResDict.append(tmpCPTagResDict)
+			else:
+				continue
 
 		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
 		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 	conn.close()
-	print 'Done'
+	print 'Done', counter
 
 if __name__ == "__main__":
 	main()
