@@ -175,7 +175,7 @@ def main():
 			cpTagResDict.append(tmpCPTagResDict)
 
 		# do the real insertion here, comment out for testing
-		if len(cpTagDict) == 0:
+		if len(cpTagDict) != 0:
 			counter = counter + len(cpTagDict)
 			insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
 			insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
@@ -212,7 +212,7 @@ def main():
 			else:
 				continue
 
-		if len(cpTagDict) == 0:
+		if len(cpTagDict) != 0:
 			counter = counter + len(cpTagDict)
 			insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
 			insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
