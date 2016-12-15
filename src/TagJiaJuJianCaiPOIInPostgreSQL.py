@@ -167,35 +167,35 @@ def main():
 		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 		# 根据tag的name字段在tbl_cp_exprop里面搜索
-		# cpExPropSQL = "SELECT ref_cp_code, prop_value FROM tbl_cp_exprop WHERE ref_cp_code "\
-		# 	" NOT IN (SELECT ref_cp_code FROM tbl_cp_tag) AND prop_value LIKE "\
-		# 	" '%" + tagRow['name'] + "%'"
-		#
-		# cpPropCursor.execute(cpExPropSQL)
-		# cpTagDict = []
-		# cpTagResDict = []
-		# for cpPropRow in cpPropCursor:
-		# 	tmpDict = {
-		# 		'ref_cp_code': cpPropRow['ref_cp_code'],
-		# 		'ref_tag_definition_id': tagRow['id'],
-		# 		'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code']),
-		# 		'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['prop_value'], 'JIADIAN')
-		# 	}
-		#
-		# 	cpTagDict.append(tmpDict)
-		#
-		# 	# 根据tagRow里面的pid选出f父节点作为tag_name
-		# 	tmpCPTagResDict = {
-		# 		'ref_cp_code': cpPropRow['ref_cp_code'],
-		# 		'ref_tag_type_code': tagRow['ref_tag_type_code'],
-		# 		'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
-		# 		'tag_value': tagRow['name'],
-		# 		'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
-		# 	}
-		# 	cpTagResDict.append(tmpCPTagResDict)
-		#
-		# insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
-		# insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
+		cpExPropSQL = "SELECT ref_cp_code, prop_value FROM tbl_cp_exprop WHERE ref_cp_code "\
+			" NOT IN (SELECT ref_cp_code FROM tbl_cp_tag) AND prop_value LIKE "\
+			" '%" + tagRow['name'] + "%'"
+
+		cpPropCursor.execute(cpExPropSQL)
+		cpTagDict = []
+		cpTagResDict = []
+		for cpPropRow in cpPropCursor:
+			tmpDict = {
+				'ref_cp_code': cpPropRow['ref_cp_code'],
+				'ref_tag_definition_id': tagRow['id'],
+				'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code']),
+				'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['prop_value'], 'JIAJU-JIANCAI-JIADIAN')
+			}
+
+			cpTagDict.append(tmpDict)
+
+			# 根据tagRow里面的pid选出f父节点作为tag_name
+			tmpCPTagResDict = {
+				'ref_cp_code': cpPropRow['ref_cp_code'],
+				'ref_tag_type_code': tagRow['ref_tag_type_code'],
+				'tag_name': getTagName(conn, tagDefCursor, tagRow['pid']),
+				'tag_value': tagRow['name'],
+				'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code'])
+			}
+			cpTagResDict.append(tmpCPTagResDict)
+
+		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
+		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
 
 	conn.close()
 	print 'Done', counter
