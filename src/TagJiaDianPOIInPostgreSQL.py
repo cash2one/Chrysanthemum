@@ -90,12 +90,16 @@ def getRefAreaCode(conn, cursor, ref_cp_code):
 # keyword like 格力空调
 # industry like AT-JIADIAN
 def getBrandCode(conn, cursor, keyword, industry):
-	sql = "SELECT brand_code FROM tbl_brand WHERE ref_area_type_code = 'AT-'"\
-		+ industry + " AND chinese_name != '' AND " + keyword + " ~ chinese_name"\
-		+ " OR english_name != '' AND " + keyword + " ~ english_name LIMIT 1"
+	sql = "SELECT brand_code FROM tbl_brand WHERE ref_area_type_code = 'AT-"\
+		+ industry + "' AND chinese_name != '' AND '" + keyword + "' ~ chinese_name"\
+		+ " OR english_name != '' AND '" + keyword + "' ~ english_name LIMIT 1"
 	cursor.execute(sql)
 	rtv = cursor.fetchone()
-	return rtv['brand_code']
+	# return rtv['brand_code']
+	if rtv:
+		return rtv['brand_code']
+	else:
+		return None
 
 def main():
 	# 记录标记了多少采集点
@@ -128,7 +132,7 @@ def main():
 	for tagRow in tagCursor:
 		# 根据tag 的name在tbl_cp_prop, tbl_cp里面搜索
 		# id, ref_cp_code, ref_cptype_code, point_name, floor_number
-		cpPropSQL = "SELECT cp.ref_area_code, cp.point_code FROM "\
+		cpPropSQL = "SELECT cp.ref_area_code, cp.point_code, prop.point_name FROM "\
 		"tbl_cp_prop prop INNER JOIN tbl_cp cp "\
 		"ON prop.ref_cp_code = cp.point_code WHERE prop.point_name LIKE "\
 		" '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE 'CP-JIADIAN%'"
@@ -155,6 +159,9 @@ def main():
 			cpTagResDict.append(tmpCPTagResDict)
 
 		# do the real insertion here, comment out for testing
+		if len(cpTagDict) == 0:
+			continue
+
 		counter = counter + len(cpTagDict)
 		insertCPTag(conn, cpTagCursor, tuple(cpTagDict))
 		insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResDict))
