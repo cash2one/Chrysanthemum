@@ -7,19 +7,19 @@
     "data": [
       {
         "type": "PROP_VALUE",
-        "name": "公寓",
+        "name": "公寓"
       },
       {
         "type": "PROP_VALUE",
-        "name": "别墅",
+        "name": "别墅"
       },
       {
         "type": "PROP_VALUE",
-        "name": "普通住宅",
+        "name": "普通住宅"
       },
       {
         "type": "PROP_VALUE",
-        "name": "商住两用",
+        "name": "商住两用"
       }
     ]
   }

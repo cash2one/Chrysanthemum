@@ -2,7 +2,7 @@
 # coding=utf-8
 #
 # Author: Archer Reilly
-# File: Load4SData.py
+# File: LoadHouseSellData.py
 # Date: 19/Dec/2016
 # Desc: 将定义的json格式的商场标签数据载入到tbl_tag_definition表格里面去，
 #       注意标签之间的层级关系.
@@ -54,7 +54,7 @@ def delTagDefinition(conn, cursor, id):
     return True
 
 def main():
-    with open('../data/Tag4S.json') as jsonData:
+    with open('../data/HouseSell.json') as jsonData:
         TagDefinition = json.load(jsonData)
 
 	#Define our connection string
@@ -115,32 +115,32 @@ def main():
             print 'not inserted', data
             sys.exit(1)
 
-        # 4th, 对每个品类下的类别风格档次等
-        for category in pinlei['data']:
-            data = (category['name'], pinleiId, category['type'], 'TTC_CLASS')
-            categoryId = insertTagDefinition(conn, tagDefCursor, data)
-            if categoryId:
-                print '\t\t\t' + category['name']
-                # print 'inserted', categoryId
-                # delTagDefinition(conn, tagDefCursor, categoryId)
-                # print 'deleted', categoryId
-
-            else:
-                print 'not inserted', data
-                sys.exit(1)
-
-            # 5th, 对于每一个类别的具体分类
-            for row in category['data']:
-                data = (row['name'], categoryId, row['type'], 'TTC_CLASS')
-                rowId = insertTagDefinition(conn, tagDefCursor, data)
-                if rowId:
-                    print '\t\t\t\t' + row['name']
-                    # print 'inserted', rowId
-                    # delTagDefinition(conn, tagDefCursor, rowId)
-                    # print 'deleted', rowId
-                else:
-                    print 'not inserted', data
-                    sys.exit(1)
+        # # 4th, 对每个品类下的类别风格档次等
+        # for category in pinlei['data']:
+        #     data = (category['name'], pinleiId, category['type'], 'TTC_CLASS')
+        #     categoryId = insertTagDefinition(conn, tagDefCursor, data)
+        #     if categoryId:
+        #         print '\t\t\t' + category['name']
+        #         # print 'inserted', categoryId
+        #         # delTagDefinition(conn, tagDefCursor, categoryId)
+        #         # print 'deleted', categoryId
+        #
+        #     else:
+        #         print 'not inserted', data
+        #         sys.exit(1)
+        #
+        #     # 5th, 对于每一个类别的具体分类
+        #     for row in category['data']:
+        #         data = (row['name'], categoryId, row['type'], 'TTC_CLASS')
+        #         rowId = insertTagDefinition(conn, tagDefCursor, data)
+        #         if rowId:
+        #             print '\t\t\t\t' + row['name']
+        #             # print 'inserted', rowId
+        #             # delTagDefinition(conn, tagDefCursor, rowId)
+        #             # print 'deleted', rowId
+        #         else:
+        #             print 'not inserted', data
+        #             sys.exit(1)
 
 
 
