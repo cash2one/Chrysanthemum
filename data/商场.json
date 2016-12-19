@@ -1,0 +1,448 @@
+{
+  "type": "PROP_VALUE",
+  "name": "商场",
+  "data": {
+    "type": "PROP_NAME",
+    "name": "品类",
+    "data": [
+      {
+        "type": "PROP_VALUE",
+        "name": "服装",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "男装"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "女装"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "内衣配饰"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "儿童"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "母婴"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中老年"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "风格",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "中式"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "韩式"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "商务"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "运动休闲"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "潮流时尚"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "成熟优雅"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "鞋帽",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "男鞋"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "女鞋"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "童鞋"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "配饰"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "风格",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "商务"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "户外"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "休闲"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "潮流"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "青少年"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "箱包",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "珠宝首饰",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "玉石"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "金银"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "钻石"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "婚戒"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "手表"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "餐饮",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "中餐"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "西餐"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "韩国菜"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "东南亚菜"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "糕点小吃"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "菜系",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "江浙"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "川菜"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "火锅"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "烧烤"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "湘菜"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "粤菜"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "西北"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中式快餐"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "西餐正餐"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "西式快餐"
+              }
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "美装",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "娱乐",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "电影院"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "电玩城"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "溜冰场"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "超市",
+        "data": [
+
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "教育",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "英语培训"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "幼儿教育"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "课程培训"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "特长培训"
+              }
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "瘦身纤体",
+        "data": [
+
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "保健品",
+        "data": [
+
+        ]
+      }
+    ]
+  }
+}
