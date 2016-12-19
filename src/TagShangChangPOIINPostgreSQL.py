@@ -2,7 +2,7 @@
 # coding=utf-8
 #
 # Author: Archer
-# File: TagShangQuanPOIInPostgreSQL.py
+# File: TagShangChangPOIInPostgreSQL.py
 # Desc: 为数据库中的采集点数据打标签，原始采集点数据在tbl_cp, tbl_cp_prop,
 #       tbl_cp_exprop, 标签数据在tbl_tag_definition, 打标签的结果存放
 #       在关系表格tbl_cp_tag中。
@@ -151,7 +151,7 @@ def main():
 		cpPropSQL = "SELECT cp.ref_area_code, cp.point_code, prop.point_name FROM "\
 		"tbl_cp_prop prop INNER JOIN tbl_cp cp "\
 		"ON prop.ref_cp_code = cp.point_code WHERE prop.point_name LIKE "\
-		" '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE 'CP-BUSSINESS%'"
+		" '%" + tagRow['name'] + "%' AND prop.ref_cptype_code LIKE 'CP-BUSSINESS-NONMAP%'"
 		cpPropCursor.execute(cpPropSQL)
 		cpTagDict = []
 		cpTagResDict = []
@@ -160,7 +160,7 @@ def main():
 				'ref_cp_code': cpPropRow['point_code'],
 				'ref_tag_definition_id': tagRow['id'],
 				'ref_area_code': cpPropRow['ref_area_code'],
-				'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'BUSSINESS')
+				'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'BUSSINESS-NONMAP')
 			}
 			cpTagDict.append(tmpDict)
 
@@ -190,12 +190,12 @@ def main():
 		cpTagDict = []
 		cpTagResDict = []
 		for cpPropRow in cpPropCursor:
-			if isCPType(conn, cpProp1Cursor, cpPropRow['ref_cp_code'], 'BUSSINESS'):
+			if isCPType(conn, cpProp1Cursor, cpPropRow['ref_cp_code'], 'BUSSINESS-NONMAP'):
 				tmpDict = {
 					'ref_cp_code': cpPropRow['ref_cp_code'],
 					'ref_tag_definition_id': tagRow['id'],
 					'ref_area_code': getRefAreaCode(conn, cpCursor, cpPropRow['ref_cp_code']),
-					'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['prop_value'], 'BUSSINESS')
+					'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['prop_value'], 'BUSSINESS-NONMAP')
 				}
 
 				cpTagDict.append(tmpDict)
