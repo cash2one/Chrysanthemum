@@ -84,7 +84,7 @@ def main():
     if id:
         print TagDefinition['name']
         # print 'inserted', id
-        delTagDefinition(conn, tagDefCursor, id)
+        # delTagDefinition(conn, tagDefCursor, id)
         # print 'deleted', id
     else:
         print 'not inserted', data
@@ -96,7 +96,7 @@ def main():
     if id:
         print '\t' + TagDefinition['data']['name']
         # print 'inserted', id
-        delTagDefinition(conn, tagDefCursor, id)
+        # delTagDefinition(conn, tagDefCursor, id)
         # print 'deleted', id
     else:
         print 'not inserted', data
@@ -104,12 +104,12 @@ def main():
 
     # 3rd, 对与每一个品类
     for pinlei in TagDefinition['data']['data']:
-        print '\t\t' + pinlei['name']
         data = (pinlei['name'], id, pinlei['type'])
         pinleiId = insertTagDefinition(conn, tagDefCursor, data)
         if pinleiId:
+            print '\t\t' + pinlei['name']
             # print 'inserted', pinleiId
-            delTagDefinition(conn, tagDefCursor, pinleiId)
+            # delTagDefinition(conn, tagDefCursor, pinleiId)
             # print 'deleted', pinleiId
         else:
             print 'not inserted', data
@@ -117,12 +117,12 @@ def main():
 
         # 4th, 对每个品类下的类别风格档次等
         for category in pinlei['data']:
-            print '\t\t\t' + category['name']
             data = (category['name'], pinleiId, category['type'])
             categoryId = insertTagDefinition(conn, tagDefCursor, data)
             if categoryId:
+                print '\t\t\t' + category['name']
                 # print 'inserted', categoryId
-                delTagDefinition(conn, tagDefCursor, categoryId)
+                # delTagDefinition(conn, tagDefCursor, categoryId)
                 # print 'deleted', categoryId
 
             else:
@@ -131,12 +131,12 @@ def main():
 
             # 5th, 对于每一个类别的具体分类
             for row in category['data']:
-                print '\t\t\t\t' + row['name']
                 data = (row['name'], categoryId, row['type'])
                 rowId = insertTagDefinition(conn, tagDefCursor, data)
                 if rowId:
+                    print '\t\t\t\t' + row['name']
                     # print 'inserted', rowId
-                    delTagDefinition(conn, tagDefCursor, rowId)
+                    # delTagDefinition(conn, tagDefCursor, rowId)
                     # print 'deleted', rowId
                 else:
                     print 'not inserted', data
