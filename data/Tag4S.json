@@ -1,0 +1,219 @@
+{
+  "type": "PROP_VALUE",
+  "name": "4S店",
+  "data": {
+    "type": "PROP_NAME",
+    "name": "品类",
+    "data": [
+      {
+        "type": "PROP_VALUE",
+        "name": "轿车",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "出产国",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "SUV",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "出产国",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "MPV",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "出产国",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "跑车",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "出产国",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "商用车",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "出产国",
+            "data": [
+            ]
+          },
+          {
+            "type": "PROP_NAME",
+            "name": "档次",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "大众"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "中档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "高档"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "奢侈"
+              }
+            ]
+          }
+        ]
+      },
+    ]
+  }
+}
