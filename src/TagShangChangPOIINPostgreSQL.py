@@ -63,12 +63,19 @@ def insertCPTagResult(conn, cursor, data):
 # pid
 def getTagName(conn, cursor, pid):
 	tag_name = None
-	cursor.execute("SELECT * FROM tbl_tag_definition WHERE "\
-		"pid < " + str(pid) + " ORDER BY pid DESC LIMIT 1")
-
+	sql = "select name from tbl_tag_definition where id = " + str(pid) + " limit 1"
+	cursor.execute(sql)
 	rtv = cursor.fetchone()
+
 	if rtv is not None:
 		tag_name = rtv['name']
+
+	# cursor.execute("SELECT * FROM tbl_tag_definition WHERE "\
+	# 	"pid < " + str(pid) + " ORDER BY pid DESC LIMIT 1")
+	#
+	# rtv = cursor.fetchone()
+	# if rtv is not None:
+	# 	tag_name = rtv['name']
 
 	return tag_name
 
@@ -90,10 +97,11 @@ def getRefAreaCode(conn, cursor, ref_cp_code):
 # keyword like 格力空调
 # industry like AT-JIADIAN
 def getBrandCode(conn, cursor, keyword, industry):
-	sql = "SELECT brand_code FROM tbl_brand WHERE ref_area_type_code = 'AT-"\
-		+ industry + "' AND chinese_name != '' AND '" + keyword + "' ~ chinese_name"\
-		+ " OR english_name != '' AND '" + keyword + "' ~ english_name LIMIT 1"
-	cursor.execute(sql)
+	sql = "select brand_code from tbl_brand where ref_area_type_code = %s and chinese_name != '' and %s ~ chinese_name or english_name != '' and %s ~ english_name limit 1"
+	# sql = "SELECT brand_code FROM tbl_brand WHERE ref_area_type_code = 'AT-"\
+	# 	+ industry + "' AND chinese_name != '' AND '" + keyword + "' ~ chinese_name"\
+	# 	+ " OR english_name != '' AND '" + keyword + "' ~ english_name LIMIT 1"
+	cursor.execute(sql, ('AT-' + industry, keyword, keyword))
 	rtv = cursor.fetchone()
 	# return rtv['brand_code']
 	if rtv:
