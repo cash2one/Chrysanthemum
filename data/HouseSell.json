@@ -1,0 +1,26 @@
+{
+  "type": "PROP_VALUE",
+  "name": "售楼处",
+  "data": {
+    "type": "PROP_NAME",
+    "name": "品类",
+    "data": [
+      {
+        "type": "PROP_VALUE",
+        "name": "公寓",
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "别墅",
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "普通住宅",
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "商住两用",
+      }
+    ]
+  }
+}
