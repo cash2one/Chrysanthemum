@@ -129,7 +129,7 @@ def main():
 	counter = 0
 
 	#Define our connection string
-	conn_string = "host='192.168.0.21' dbname='jmtool3_1206_i'"\
+	conn_string = "host='127.0.0.1' dbname='jmtool20161229'"\
 		+ " user='postgres' password='postgres'"
 
 	# print the connection string we will use to connect

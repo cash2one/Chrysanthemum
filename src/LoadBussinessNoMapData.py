@@ -18,7 +18,7 @@ import json
 #
 # id or False
 def getRootId(cursor):
-    sql = "select id from tbl_tag_definition order by id limit 1"
+    sql = "select id from tbl_tag_definition where name = '行业' order by id limit 1"
     cursor.execute(sql)
     rtv = cursor.fetchone()
     if rtv:
@@ -33,7 +33,7 @@ def getRootId(cursor):
 #
 # id
 def insertTagDefinition(conn, cursor, data):
-    sql = "insert into tbl_tag_definition (name, pid, node_type) values(%s, %s, %s) RETURNING id"
+    sql = "insert into tbl_tag_definition (name, pid, node_type, ref_tag_type_code) values(%s, %s, %s, %s) RETURNING id"
     cursor.execute(sql, data)
     conn.commit()
     id = cursor.fetchone()[0]
@@ -58,7 +58,7 @@ def main():
         TagDefinition = json.load(jsonData)
 
 	#Define our connection string
-	conn_string = "host='192.168.0.21' dbname='jmtool3_1206_i'"\
+	conn_string = "host='127.0.0.1' dbname='jmtool20161229'"\
 		+ " user='postgres' password='postgres'"
 
 	# print the connection string we will use to connect
@@ -79,7 +79,7 @@ def main():
 
     # 针对树形结构的json数据，逐步载入数据到tbl_tag_definition
     # 1st, for industry
-    data = (TagDefinition['name'], rootId, TagDefinition['type'])
+    data = (TagDefinition['name'], rootId, TagDefinition['type'], 'TTC_STYLE')
     id = insertTagDefinition(conn, tagDefCursor, data)
     if id:
         print TagDefinition['name']
@@ -91,7 +91,7 @@ def main():
         sys.exit(1)
 
     # 2nd, 品类
-    data = (TagDefinition['data']['name'], id, TagDefinition['data']['type'])
+    data = (TagDefinition['data']['name'], id, TagDefinition['data']['type'], 'TTC_STYLE')
     id = insertTagDefinition(conn, tagDefCursor, data)
     if id:
         print '\t' + TagDefinition['data']['name']
@@ -104,7 +104,7 @@ def main():
 
     # 3rd, 对与每一个品类
     for pinlei in TagDefinition['data']['data']:
-        data = (pinlei['name'], id, pinlei['type'])
+        data = (pinlei['name'], id, pinlei['type'], 'TTC_STYLE')
         pinleiId = insertTagDefinition(conn, tagDefCursor, data)
         if pinleiId:
             print '\t\t' + pinlei['name']
@@ -117,7 +117,7 @@ def main():
 
         # 4th, 对每个品类下的类别风格档次等
         for category in pinlei['data']:
-            data = (category['name'], pinleiId, category['type'])
+            data = (category['name'], pinleiId, category['type'], 'TTC_STYLE')
             categoryId = insertTagDefinition(conn, tagDefCursor, data)
             if categoryId:
                 print '\t\t\t' + category['name']
@@ -131,7 +131,7 @@ def main():
 
             # 5th, 对于每一个类别的具体分类
             for row in category['data']:
-                data = (row['name'], categoryId, row['type'])
+                data = (row['name'], categoryId, row['type'], 'TTC_STYLE')
                 rowId = insertTagDefinition(conn, tagDefCursor, data)
                 if rowId:
                     print '\t\t\t\t' + row['name']
