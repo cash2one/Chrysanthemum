@@ -103,17 +103,18 @@ def main():
     cpPropCursor.execute(cpPropSql)
 
     for cpPropRow in cpPropCursor:
-        if len(cpTagLst) == 100:
+        if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
             insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
             print "Inserted", len(cpTagLst)
             cpTagLst = []
             cpTagResLst = []
 
-        tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpPropRow['point_name'].replace("'", " ") + "' like '%' || name || '%' order by id desc limit 1"
+        tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpPropRow['point_name'].replace("'", " ") + "' like '%' || name || '%' order by id desc"
+        # tagDefRtv = tagDefCursor.fetchone()
         tagDefCursor.execute(tagDefSql)
-        tagDefRtv = tagDefCursor.fetchone()
-        if tagDefRtv is not None:
+        for tagDefRtv in tagDefCursor:
+        # if tagDefRtv is not None:
             tmpDict = {
                 'ref_cp_code': cpPropRow['point_code'],
                 'ref_tag_definition_id': tagDefRtv['id'],
