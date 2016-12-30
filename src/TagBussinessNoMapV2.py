@@ -115,7 +115,7 @@ def main():
             cpTagLst = []
             cpTagResLst = []
 
-        cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where point_name like '%" + row[0] + "%'"
+        cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-BUSSINESS-NONMAP%' and point_name like '%" + row[0] + "%'"
         cpPropCursor.execute(cpPropSql)
         for cpPropRow in cpPropCursor:
             for tag in row[1:]:
