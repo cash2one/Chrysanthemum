@@ -1,0 +1,274 @@
+{
+  "type": "PROP_VALUE",
+  "name": "综合医院",
+  "data": {
+    "type": "PROP_NAME",
+    "name": "品类",
+    "data": [
+      {
+        "type": "PROP_VALUE",
+        "name": "内科",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "呼吸内科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "消化内科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "泌尿内科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "心内科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "神经内科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "内分泌科"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "外科",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "普外科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "神经外科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "肝胆外科"
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "泌尿外科"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "儿科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "妇科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "肝病科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "男科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "妇产科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "骨科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "眼科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "口腔科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "皮肤科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "美容",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "中医科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "血液科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "传染科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "感染科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "烧伤科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "耳鼻喉科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "针灸推拿科",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "心里咨询室",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "检查化验类",
+        "data": [
+          {
+            "type": "PROP_NAME",
+            "name": "类别",
+            "data": [
+              {
+                "type": "PROP_VALUE",
+                "name": "B超室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "CT室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "ECT室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "血透室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "病理室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "拍片室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "手术室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "生化室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "检验室",
+                "data": []
+              },
+              {
+                "type": "PROP_VALUE",
+                "name": "磁共振室",
+                "data": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "手术室",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "重症监护室",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "药房",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "收费窗口",
+        "data": [
+        ]
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "办公室",
+        "data": [
+        ]
+      }
+    ]
+  }
+}
