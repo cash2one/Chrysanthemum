@@ -122,6 +122,12 @@ def main():
                 'ref_area_code': cpPropRow['ref_area_code']
             }
             cpTagResLst.append(tmpCPTagResDict)
+    if len(cpTagLst) > 0:
+        insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+        insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
+        print "Inserted", len(cpTagLst)
+        cpTagLst = []
+        cpTagResLst = []
 
     # prop_value, the folloing sql will be fuck slow, 商场在tbl_cp_exprop里面没有数据，所以下面的逻辑可以不执行
     cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-HOSPITALP%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
@@ -156,6 +162,13 @@ def main():
                 'ref_area_code': cpPropRow['ref_area_code']
             }
             cpTagResLst.append(tmpCPTagResDict)
+
+    if len(cpTagLst) > 0:
+        insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+        insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
+        print "Inserted", len(cpTagLst)
+        cpTagLst = []
+        cpTagResLst = []
 
 if __name__ == "__main__":
 	main()
