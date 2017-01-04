@@ -91,10 +91,8 @@ def main():
     cpTagResLst = []
 
     # point_name
-    # cpPropSql = "select * from tbl_cp_prop where ref_cptype_code like 'CP-BUSSINESS-NONMAP%'"
-    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-HOSPITAL%'"
+    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-HOSPITAL-ROOM%'"
     cpPropCursor.execute(cpPropSql)
-
     for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
@@ -122,35 +120,15 @@ def main():
                 'ref_area_code': cpPropRow['ref_area_code']
             }
             cpTagResLst.append(tmpCPTagResDict)
-    if len(cpTagLst) > 0:
-        insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-        insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
-        print "Inserted", len(cpTagLst)
-        cpTagLst = []
-        cpTagResLst = []
 
-    # prop_value, the folloing sql will be fuck slow, 商场在tbl_cp_exprop里面没有数据，所以下面的逻辑可以不执行
-    cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-HOSPITALP%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
-    cpExPropCursor.execute(cpExPropSql)
-    cpTagLst = []
-    cpTagResLst = []
-    for cpExPropRow in cpExPropCursor:
-        if len(cpTagLst) == 100:
-            insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-            insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
-            print "Inserted", len(cpTagLst)
-            cpTagLst = []
-            cpTagResLst = []
-
-        tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpExPropRow['prop_value'].replace("'", " ") + "' like '%' || name || '%' order by id desc limit 1"
+        tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and name like '%" + cpPropRow['point_name'].replace("'", " ") + "%' order by id desc"
         tagDefCursor.execute(tagDefSql)
-        tagDefRtv = tagDefCursor.fetchone()
-        if tagDefRtv is not None:
+        for tagDefRtv in tagDefCursor:
             tmpDict = {
-                'ref_cp_code': cpExPropRow['point_code'],
+                'ref_cp_code': cpPropRow['point_code'],
                 'ref_tag_definition_id': tagDefRtv['id'],
-                'ref_area_code': cpExPropRow['ref_area_code'],
-                'ref_brand_code': getBrandCode(conn, brandCursor, cpExPropRow['prop_value'], 'HOSPITAL')
+                'ref_area_code': cpPropRow['ref_area_code'],
+                'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'HOSPITAL')
             }
             cpTagLst.append(tmpDict)
 
@@ -162,6 +140,47 @@ def main():
                 'ref_area_code': cpPropRow['ref_area_code']
             }
             cpTagResLst.append(tmpCPTagResDict)
+    
+    if len(cpTagLst) > 0:
+        insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+        insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
+        print "Inserted", len(cpTagLst)
+        cpTagLst = []
+        cpTagResLst = []
+
+    # # prop_value, the folloing sql will be fuck slow, 商场在tbl_cp_exprop里面没有数据，所以下面的逻辑可以不执行
+    # cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-HOSPITALP-ROOM%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
+    # cpExPropCursor.execute(cpExPropSql)
+    # cpTagLst = []
+    # cpTagResLst = []
+    # for cpExPropRow in cpExPropCursor:
+    #     if len(cpTagLst) == 100:
+    #         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+    #         insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
+    #         print "Inserted", len(cpTagLst)
+    #         cpTagLst = []
+    #         cpTagResLst = []
+    #
+    #     tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpExPropRow['prop_value'].replace("'", " ") + "' like '%' || name || '%' order by id desc limit 1"
+    #     tagDefCursor.execute(tagDefSql)
+    #     tagDefRtv = tagDefCursor.fetchone()
+    #     if tagDefRtv is not None:
+    #         tmpDict = {
+    #             'ref_cp_code': cpExPropRow['point_code'],
+    #             'ref_tag_definition_id': tagDefRtv['id'],
+    #             'ref_area_code': cpExPropRow['ref_area_code'],
+    #             'ref_brand_code': getBrandCode(conn, brandCursor, cpExPropRow['prop_value'], 'HOSPITAL')
+    #         }
+    #         cpTagLst.append(tmpDict)
+    #
+    #         tmpCPTagResDict = {
+    #             'ref_cp_code': cpPropRow['point_code'],
+    #             'ref_tag_type_code': tagDefRtv['ref_tag_type_code'],
+    #             'tag_name': getTagName(conn, tagDefCursor, tagDefRtv['pid']),
+    #             'tag_value': tagDefRtv['name'],
+    #             'ref_area_code': cpPropRow['ref_area_code']
+    #         }
+    #         cpTagResLst.append(tmpCPTagResDict)
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))

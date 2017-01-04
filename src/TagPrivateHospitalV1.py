@@ -92,7 +92,7 @@ def main():
 
     # point_name
     # cpPropSql = "select * from tbl_cp_prop where ref_cptype_code like 'CP-BUSSINESS-NONMAP%'"
-    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL%'"
+    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL-ROOM%'"
     cpPropCursor.execute(cpPropSql)
 
     for cpPropRow in cpPropCursor:
@@ -131,7 +131,7 @@ def main():
         cpTagResLst = []
 
     # prop_value, the folloing sql will be fuck slow, 商场在tbl_cp_exprop里面没有数据，所以下面的逻辑可以不执行
-    cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
+    cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL-ROOM%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
     cpExPropCursor.execute(cpExPropSql)
     cpTagLst = []
     cpTagResLst = []
