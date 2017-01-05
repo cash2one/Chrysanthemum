@@ -33,6 +33,16 @@ def getTagName(conn, cursor, pid):
 
 	return tag_name
 
+def isInCpTagRelation(conn, cursor, ref_cp_code, tagId):
+    sql = "select * from tbl_cp_tag_relation where ref_cp_code = '" + ref_cp_code + "' and ref_tag_definition_id = " + str(tagId) + " limit 1"
+    cursor.execute(sql)
+    rtv = cursor.fetchone()
+
+    if rtv is not None:
+        return True
+    else:
+        return False
+
 # getBrandCode
 # 根据传入的关键词在tbl_brand里面获取品牌code
 # conn connection to the database
@@ -57,9 +67,9 @@ def getBrandCode(conn, cursor, keyword, industry):
 # cursor a db table cursor
 # data tuple
 def insertCPTag(conn, cursor, data):
-	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id, ref_area_code, ref_brand_code"\
-		") VALUES(%(ref_cp_code)s, "\
-		"%(ref_tag_definition_id)s, %(ref_area_code)s, %(ref_brand_code)s)"
+	cpTagSQL = "INSERT INTO tbl_cp_tag_relation(ref_cp_code, ref_tag_definition_id, ref_area_code, ref_brand_code"\
+		", flag) VALUES(%(ref_cp_code)s, "\
+		"%(ref_tag_definition_id)s, %(ref_area_code)s, %(ref_brand_code)s, %(flag)s)"
 
 	cursor.executemany(cpTagSQL, data)
 	conn.commit() # commit the operation, or it wont take effect
@@ -95,20 +105,16 @@ def main():
     cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cpTagLst = []
-    cpTagResLst = []
 
-    # point_name
-    # cpPropSql = "select * from tbl_cp_prop where ref_cptype_code like 'CP-BUSSINESS-NONMAP%'"
-    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR'"
+    # point_name, 选出还没有清洗的点并且是INDOOR OUTDOOR的
+    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where (p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR') and p.ref_cp_code not in (select distinct(ref_cp_code) from tbl_cp_tag_relation)"
     cpPropCursor.execute(cpPropSql)
 
     for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-            insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
             print "Inserted", len(cpTagLst)
             cpTagLst = []
-            cpTagResLst = []
 
         # 用 point_name 去匹配tag, 如果不中，用tag反过来匹配point_name，否则真没有
         tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpPropRow['point_name'].replace("'", " ") + "' like '%' || name || '%' order by id desc"
@@ -118,45 +124,29 @@ def main():
                 'ref_cp_code': cpPropRow['point_code'],
                 'ref_tag_definition_id': tagDefRtv['id'],
                 'ref_area_code': cpPropRow['ref_area_code'],
-                'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'BUSSINESS-NONMAP')
+                'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'BUSSINESS-NONMAP'),
+                'flag': 'BV1'
             }
             cpTagLst.append(tmpDict)
 
-            tmpCPTagResDict = {
-                'ref_cp_code': cpPropRow['point_code'],
-                'ref_tag_type_code': tagDefRtv['ref_tag_type_code'],
-                'tag_name': getTagName(conn, tagDefCursor, tagDefRtv['pid']),
-                'tag_value': tagDefRtv['name'],
-                'ref_area_code': cpPropRow['ref_area_code']
-            }
-            cpTagResLst.append(tmpCPTagResDict)
 
         tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and name like '%" + cpPropRow['point_name'].replace("'", " ") + "%' order by id desc"
         tagDefCursor.execute(tagDefSql)
         for tagDefRtv in tagDefCursor:
-            tmpDict = {
-                'ref_cp_code': cpPropRow['point_code'],
-                'ref_tag_definition_id': tagDefRtv['id'],
-                'ref_area_code': cpPropRow['ref_area_code'],
-                'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'BUSSINESS-NONMAP')
-            }
-            cpTagLst.append(tmpDict)
-
-            tmpCPTagResDict = {
-                'ref_cp_code': cpPropRow['point_code'],
-                'ref_tag_type_code': tagDefRtv['ref_tag_type_code'],
-                'tag_name': getTagName(conn, tagDefCursor, tagDefRtv['pid']),
-                'tag_value': tagDefRtv['name'],
-                'ref_area_code': cpPropRow['ref_area_code']
-            }
-            cpTagResLst.append(tmpCPTagResDict)
+            if not isInCpTagRelation(conn, cpTagResCursor, cpPropRow['point_code'], tagDefRtv['id']):
+                tmpDict = {
+                    'ref_cp_code': cpPropRow['point_code'],
+                    'ref_tag_definition_id': tagDefRtv['id'],
+                    'ref_area_code': cpPropRow['ref_area_code'],
+                    'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'BUSSINESS-NONMAP'),
+                    'flag': 'BV1'
+                }
+                cpTagLst.append(tmpDict)
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-        insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
         print "Inserted", len(cpTagLst)
         cpTagLst = []
-        cpTagResLst = []
 
     # prop_value, the folloing sql will be fuck slow, 商场在tbl_cp_exprop里面没有数据，所以下面的逻辑可以不执行
     # cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code =  'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"

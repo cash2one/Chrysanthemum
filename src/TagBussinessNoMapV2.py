@@ -36,9 +36,9 @@ def getBrandCode(conn, cursor, keyword, industry):
 # cursor a db table cursor
 # data tuple
 def insertCPTag(conn, cursor, data):
-	cpTagSQL = "INSERT INTO tbl_cp_tag(ref_cp_code, ref_tag_definition_id, ref_area_code, ref_brand_code"\
-		") VALUES(%(ref_cp_code)s, "\
-		"%(ref_tag_definition_id)s, %(ref_area_code)s, %(ref_brand_code)s)"
+	cpTagSQL = "INSERT INTO tbl_cp_tag_relation(ref_cp_code, ref_tag_definition_id, ref_area_code, ref_brand_code"\
+		", flag) VALUES(%(ref_cp_code)s, "\
+		"%(ref_tag_definition_id)s, %(ref_area_code)s, %(ref_brand_code)s, %(flag)s)"
 
 	cursor.executemany(cpTagSQL, data)
 	conn.commit() # commit the operation, or it wont take effect
@@ -104,18 +104,16 @@ def main():
 
     count = 0
     cpTagLst = []
-    cpTagResLst = []
 
     reader = unicode_csv_reader(open('../data/商场品牌表.csv'))
     for row in reader:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-            insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
             print "Inserted", len(cpTagLst)
             cpTagLst = []
             cpTagResLst = []
 
-        cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-BUSSINESS-NONMAP%' and point_name like '%" + row[0] + "%'"
+        cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where (p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR') and point_name like '%" + row[0] + "%'"
         cpPropCursor.execute(cpPropSql)
         for cpPropRow in cpPropCursor:
             for tag in row[1:]:
@@ -125,21 +123,18 @@ def main():
                         'ref_cp_code': cpPropRow['point_code'],
                         'ref_tag_definition_id': tagRtv[0],
                         'ref_area_code': cpPropRow['ref_area_code'],
-                        'ref_brand_code': getBrandCode(conn, brandCursor, row[0], 'BUSSINESS-NONMAP')
+                        'ref_brand_code': getBrandCode(conn, brandCursor, row[0], 'BUSSINESS-NONMAP'),
+                        'flag': 'BV2'
                     }
                     cpTagLst.append(tmpDict)
 
-                    tmpCPTagResDict = {
-                        'ref_cp_code': cpPropRow['point_code'],
-                        'ref_tag_type_code': tagRtv[2],
-                        'tag_name': getTagName(conn, tagDefCursor, tagRtv[1]),
-                        'tag_value': tag,
-                        'ref_area_code': cpPropRow['ref_area_code']
-                    }
-                    cpTagResLst.append(tmpCPTagResDict)
-
             count = count + 1
 
+    if len(cpTagLst) > 0:
+        insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+        print "Inserted", len(cpTagLst)
+        cpTagLst = []
+        cpTagResLst = []
 
     print "Done", count
 

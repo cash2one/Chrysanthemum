@@ -1,0 +1,1 @@
+insert overwrite directory '/user/archer/output' select distinct(point_name) from tbl_cp_prop where (tbl_cp_prop.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or tbl_cp_prop.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR') and tbl_cp_prop.ref_cp_code not in (select tbl_cp_tag_relation.ref_cp_code from tbl_cp_tag_relation);
