@@ -86,6 +86,20 @@ def isInCpTagRelation(conn, cursor, ref_cp_code, tagId):
     else:
         return False
 
+def isInLst(Lst, query):
+    for l in Lst:
+        if query in l:
+            return (True, l[0])
+
+    return (False, False)
+
+def isInLstReverse(Lst, query):
+    for l in Lst:
+        if l in query:
+            return (True, l[0])
+
+    return (False, False)
+
 def main():
     connStr = "host='127.0.0.1' dbname='jmtool20161229' user='postgres' password='postgres'"
     conn = psycopg2.connect(connStr)
@@ -98,9 +112,12 @@ def main():
     cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cpTagLst = []
+    TagDefs = []
+    tagDefCursor.execute("select * from tbl_tag_def")
+    for tagDefRtv in tagDefCursor:
+        TagDefs.append([tagDefRtv['id'], tagDefRtv['name'], tagDefRtv['descriptions']])
 
     # point_name
-    # cpPropSql = "select * from tbl_cp_prop where ref_cptype_code like 'CP-BUSSINESS-NONMAP%'"
     cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL-ROOM%'"
     cpPropCursor.execute(cpPropSql)
 
@@ -110,30 +127,32 @@ def main():
             print "Inserted", len(cpTagLst)
             cpTagLst = []
 
-        tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpPropRow['point_name'].replace("'", " ") + "' like '%' || name || '%' order by id desc"
-        tagDefCursor.execute(tagDefSql)
-        for tagDefRtv in tagDefCursor:
-            tmpDict = {
-                'ref_cp_code': cpPropRow['point_code'],
-                'ref_tag_definition_id': tagDefRtv['id'],
-                'ref_area_code': cpPropRow['ref_area_code'],
-                'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'PRIVATE-HOSPITAL'),
-                'flag': 'PHV1'
-            }
-            cpTagLst.append(tmpDict)
+        # 循环TagDefs，拿着point_name和里面的descriptions匹配
+        for tagDef in TagDefs:
+            tmpLst = tagDef[2].split(',')
 
-        tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and name like '%" + cpPropRow['point_name'].replace("'", " ") + "%' order by id desc"
-        tagDefCursor.execute(tagDefSql)
-        for tagDefRtv in tagDefCursor:
-            if not isInCpTagRelation(conn, cpTagResCursor, cpPropRow['point_code'], tagDefRtv['id']):
+            rtvReverse = isInLstReverse(tmpLst, cpPropRow['point_name']) # point_name中包含科室
+
+            if rtvReverse[0]:
                 tmpDict = {
                     'ref_cp_code': cpPropRow['point_code'],
-                    'ref_tag_definition_id': tagDefRtv['id'],
+                    'ref_tag_definition_id': tagDef[0],
                     'ref_area_code': cpPropRow['ref_area_code'],
-                    'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'PRIVATE-HOSPITAL'),
-                    'flag': 'PHV1'
+                    'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'HOSPITAL'),
+                    'flag': 'PHV1.1'
                 }
                 cpTagLst.append(tmpDict)
+            else:
+                rtv = isInLst(tmpLst, cpPropRow['point_name']) # 科室中包含point_name
+                if rtv[0]:
+                    tmpDict = {
+                        'ref_cp_code': cpPropRow['point_code'],
+                        'ref_tag_definition_id': tagDef[0],
+                        'ref_area_code': cpPropRow['ref_area_code'],
+                        'ref_brand_code': getBrandCode(conn, brandCursor, cpPropRow['point_name'], 'HOSPITAL'),
+                        'flag': 'PHV1.1'
+                    }
+                    cpTagLst.append(tmpDict)
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
@@ -141,45 +160,46 @@ def main():
         cpTagLst = []
 
     # prop_value, the folloing sql will be fuck slow, 商场在tbl_cp_exprop里面没有数据，所以下面的逻辑可以不执行
-    # cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL-ROOM%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
-    # cpExPropCursor.execute(cpExPropSql)
-    # cpTagLst = []
-    # cpTagResLst = []
-    # for cpExPropRow in cpExPropCursor:
-    #     if len(cpTagLst) >= 100:
-    #         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-    #         insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
-    #         print "Inserted", len(cpTagLst)
-    #         cpTagLst = []
-    #         cpTagResLst = []
-    #
-    #     tagDefSql = "select * from tbl_tag_definition where node_type = 'PROP_VALUE' and '" +cpExPropRow['prop_value'].replace("'", " ") + "' like '%' || name || '%' order by id desc limit 1"
-    #     tagDefCursor.execute(tagDefSql)
-    #     tagDefRtv = tagDefCursor.fetchone()
-    #     if tagDefRtv is not None:
-    #         tmpDict = {
-    #             'ref_cp_code': cpExPropRow['point_code'],
-    #             'ref_tag_definition_id': tagDefRtv['id'],
-    #             'ref_area_code': cpExPropRow['ref_area_code'],
-    #             'ref_brand_code': getBrandCode(conn, brandCursor, cpExPropRow['prop_value'], 'PRIVATE-HOSPITAL')
-    #         }
-    #         cpTagLst.append(tmpDict)
-    #
-    #         tmpCPTagResDict = {
-    #             'ref_cp_code': cpPropRow['point_code'],
-    #             'ref_tag_type_code': tagDefRtv['ref_tag_type_code'],
-    #             'tag_name': getTagName(conn, tagDefCursor, tagDefRtv['pid']),
-    #             'tag_value': tagDefRtv['name'],
-    #             'ref_area_code': cpPropRow['ref_area_code']
-    #         }
-    #         cpTagResLst.append(tmpCPTagResDict)
-    #
-    # if len(cpTagLst) > 0:
-    #     insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
-    #     insertCPTagResult(conn, cpTagResCursor, tuple(cpTagResLst))
-    #     print "Inserted", len(cpTagLst)
-    #     cpTagLst = []
-    #     cpTagResLst = []
+    cpExPropSql = "select cp.point_code, cp.ref_area_code, ex.prop_value from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code inner join tbl_cp_exprop ex on cp.point_code = ex.ref_cp_code where p.ref_cptype_code like 'CP-PRIVATE-HOSPITAL-ROOM%' and cp.point_code not in (select ref_cp_code from tbl_cp_tag)"
+    cpExPropCursor.execute(cpExPropSql)
+    cpTagLst = []
+    for cpExPropRow in cpExPropCursor:
+        if len(cpTagLst) >= 100:
+            insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+            print "Inserted", len(cpTagLst)
+            cpTagLst = []
+
+        # 循环TagDefs，拿着point_name和里面的descriptions匹配
+        for tagDef in TagDefs:
+            tmpLst = tagDef[2].split(',')
+
+            rtvReverse = isInLstReverse(tmpLst, cpExPropRow['prop_value']) # point_name中包含科室
+
+            if rtvReverse[0]:
+                tmpDict = {
+                    'ref_cp_code': cpExPropRow['point_code'],
+                    'ref_tag_definition_id': tagDef[0],
+                    'ref_area_code': cpExPropRow['ref_area_code'],
+                    'ref_brand_code': getBrandCode(conn, brandCursor, cpExPropRow['prop_value'], 'HOSPITAL'),
+                    'flag': 'PHV1.2'
+                }
+                cpTagLst.append(tmpDict)
+            else:
+                rtv = isInLst(tmpLst, cpPropRow['point_name']) # 科室中包含point_name
+                if rtv[0]:
+                    tmpDict = {
+                        'ref_cp_code': cpExPropRow['point_code'],
+                        'ref_tag_definition_id': tagDef[0],
+                        'ref_area_code': cpExPropRow['ref_area_code'],
+                        'ref_brand_code': getBrandCode(conn, brandCursor, cpExPropRow['prop_value'], 'HOSPITAL'),
+                        'flag': 'PHV1.2'
+                    }
+                    cpTagLst.append(tmpDict)
+
+    if len(cpTagLst) > 0:
+        insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
+        print "Inserted", len(cpTagLst)
+        cpTagLst = []
 
 if __name__ == "__main__":
 	main()
