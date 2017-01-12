@@ -46,51 +46,34 @@ def insertCPTag(conn, cursor, data):
 
 	return True
 
-# insert tbl_cp_tag_result
-# conn connection to the database
-# cursor a db table cursor
-# data tuple
-def insertCPTagResult(conn, cursor, data):
-	cpTagResSQL = "INSERT INTO tbl_cp_tag_result(ref_cp_code, "\
-		"ref_tag_type_code, tag_name, tag_value, ref_area_code) "\
-		"VALUES(%(ref_cp_code)s, %(ref_tag_type_code)s, %(tag_name)s, "\
-		"%(tag_value)s, %(ref_area_code)s)"
+def isInLst(Lst, query):
+    if len(query) == 0:
+        return False
 
-	cursor.executemany(cpTagResSQL, data)
-	conn.commit()
-	# print len(data), cursor.statusmessage
+    for l in Lst:
+        if len(l) == 0:
+            continue
 
-	return True
+        if query in l:
+            print 'isInLst', query, l
+            return True
 
-# get tag name
-# 根据pid获取父亲节点名称
-# conn connection to the database
-# cursor a db table cursor
-# pid
-def getTagName(conn, cursor, pid):
-	tag_name = None
-	sql = "select name from tbl_tag_definition where id = " + str(pid) + " limit 1"
-	cursor.execute(sql)
-	rtv = cursor.fetchone()
+    return False
 
-	if rtv is not None:
-		tag_name = rtv['name']
+def isInLstReverse(Lst, query):
+    if len(query) == 0:
+        return False
 
-	return tag_name
+    for l in Lst:
+        if len(l) == 0:
+            continue
 
-def getTag(conn, cursor, name):
-        sql = "select id, pid, ref_tag_type_code from tbl_tag_definition where name = '" + name + "'"
-        cursor.execute(sql)
-	rtv = cursor.fetchone()
-	if rtv:
-		return (rtv['id'], rtv['pid'], rtv['ref_tag_type_code'])
-	else:
-		return False
+        if l in query:
+            print 'isInLstReverse', query, l
+            return True
 
-def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
-    csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
-    for row in csv_reader:
-        yield [unicode(cell, 'utf-8') for cell in row]
+    return False
+
 
 def main():
     conn_string = "host='127.0.0.1' dbname='jmtool20161229'"\
@@ -105,39 +88,52 @@ def main():
     count = 0
     cpTagLst = []
 
-    reader = unicode_csv_reader(open('../data/商场品牌表.csv'))
-    for row in reader:
+    # 载入对照表
+    BrandTags = []
+    with open('../data/商场品牌表.csv') as F:
+        for line in F:
+            BrandTags.append(line.strip().split(','))
+
+
+    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where (p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR')"
+    cpPropCursor.execute(cpPropSql)
+    for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
             print "Inserted", len(cpTagLst)
             cpTagLst = []
-            cpTagResLst = []
 
-        cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where (p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR') and point_name like '%" + row[0] + "%'"
-        cpPropCursor.execute(cpPropSql)
-        for cpPropRow in cpPropCursor:
-            for tag in row[1:]:
-                tagRtv = getTag(conn, tagDefCursor, tag)
-                if tagRtv:
+        for brandTag in BrandTags:
+            tmpLst = brandTag[0:1]
+
+            rtvReverse = isInLstReverse(tmpLst, cpPropRow['point_name']) # point_name中包含品牌
+            if rtvReverse:
+                tmpDict = {
+                    'ref_cp_code': cpPropRow['point_code'],
+                    'ref_tag_definition_id': 1,
+                    'ref_area_code': cpPropRow['ref_area_code'],
+                    'ref_brand_code': None,
+                    'flag': 'BV2'
+                }
+                cpTagLst.append(tmpDict)
+                break
+            else:
+                rtv = isInLst(tmpLst, cpPropRow['point_name']) # 品牌中包含point_name
+                if rtv:
                     tmpDict = {
                         'ref_cp_code': cpPropRow['point_code'],
-                        'ref_tag_definition_id': tagRtv[0],
+                        'ref_tag_definition_id': 1,
                         'ref_area_code': cpPropRow['ref_area_code'],
-                        'ref_brand_code': getBrandCode(conn, brandCursor, row[0], 'BUSSINESS-NONMAP'),
+                        'ref_brand_code': None,
                         'flag': 'BV2'
                     }
                     cpTagLst.append(tmpDict)
-
-            count = count + 1
+                    break
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
         print "Inserted", len(cpTagLst)
         cpTagLst = []
-        cpTagResLst = []
-
-    print "Done", count
-
 
 if __name__ == "__main__":
 	main()

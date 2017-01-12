@@ -85,18 +85,32 @@ def insertCPTag(conn, cursor, data):
 	return True
 
 def isInLst(Lst, query):
-    for l in Lst:
-        if query in l:
-            return (True, Lst[0])
+    if len(query) == 0:
+        return False
 
-    return (False, False)
+    for l in Lst:
+        if len(l) == 0:
+            continue
+
+        if query in l:
+            print 'isInLst', query, l
+            return True
+
+    return False
 
 def isInLstReverse(Lst, query):
-    for l in Lst:
-        if l in query:
-            return (True, Lst[0])
+    if len(query) == 0:
+        return False
 
-    return (False, False)
+    for l in Lst:
+        if len(l) == 0:
+            continue
+
+        if l in query:
+            print 'isInLstReverse', query, l
+            return True
+
+    return False
 
 
 def main():
@@ -114,16 +128,9 @@ def main():
 
     # 载入对照表
     BrandTags = []
-    with open('../data/bussinessbrandtags.csv') as F:
+    with open('../data/bussinesstags.csv') as F:
         for line in F:
             BrandTags.append(line.strip().split(','))
-
-    # 载入id，tag对照表
-    TagIds = []
-    tagIdSql = "select id, name from tbl_tag_def where flag = 'BUSSINESS'"
-    tagDefCursor.execute(tagIdSql)
-    for tagIdRow in tagDefCursor:
-        TagIds.append([tagIdRow['name'], tagIdRow['id']])
 
     # point_name, INDOOR OUTDOOR的
     cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp cp inner join tbl_cp_prop p on cp.point_code = p.ref_cp_code where (p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or p.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR')"
@@ -136,37 +143,31 @@ def main():
             cpTagLst = []
 
         for brandTag in BrandTags:
-            tmpLst = brandTag[0:1]
+            tmpLst = brandTag[2:4]
 
             rtvReverse = isInLstReverse(tmpLst, cpPropRow['point_name']) # point_name中包含品牌
-            if rtvReverse[0]:
-                for tag in brandTag[2:]:
-                    if len(tag) == 0:
-                        continue
-
+            if rtvReverse:
+                tmpDict = {
+                    'ref_cp_code': cpPropRow['point_code'],
+                    'ref_tag_definition_id': 1,
+                    'ref_area_code': cpPropRow['ref_area_code'],
+                    'ref_brand_code': None,
+                    'flag': 'BV3'
+                }
+                cpTagLst.append(tmpDict)
+                break
+            else:
+                rtv = isInLst(tmpLst, cpPropRow['point_name']) # 品牌中包含point_name
+                if rtv:
                     tmpDict = {
                         'ref_cp_code': cpPropRow['point_code'],
-                        'ref_tag_definition_id': getTagId(TagIds, tag),
+                        'ref_tag_definition_id': 1,
                         'ref_area_code': cpPropRow['ref_area_code'],
                         'ref_brand_code': None,
                         'flag': 'BV3'
                     }
                     cpTagLst.append(tmpDict)
-            else:
-                rtv = isInLst(tmpLst, cpPropRow['point_name']) # 品牌中包含point_name
-                if rtv[0]:
-                    for tag in brandTag[2:]:
-                        if len(tag) == 0:
-                            continue
-
-                        tmpDict = {
-                            'ref_cp_code': cpPropRow['point_code'],
-                            'ref_tag_definition_id': getTagId(TagIds, tag),
-                            'ref_area_code': cpPropRow['ref_area_code'],
-                            'ref_brand_code': None,
-                            'flag': 'BV3'
-                        }
-                        cpTagLst.append(tmpDict)
+                    break
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))

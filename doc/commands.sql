@@ -1,4 +1,4 @@
-insert overwrite directory '/user/archer/output' select distinct(point_name) from tbl_cp_prop where (tbl_cp_prop.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or tbl_cp_prop.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR') and tbl_cp_prop.ref_cp_code not in (select tbl_cp_tag_relation.ref_cp_code from tbl_cp_tag_relation);
+insert overwrite directory '/user/archer/output' select distinct(point_name) from tbl_cp_prop where (tbl_cp_prop.ref_cptype_code = 'CP-BUSSINESS-NONMAP-INDOOR' or tbl_cp_prop.ref_cptype_code = 'CP-BUSSINESS-NONMAP-OUTDOOR') and tbl_cp_prop.ref_cp_code not in (select tbl_cp_tag_relation.ref_cp_code from tbl_cp_tag_relation where tbl_cp_tag_relation.flag = 'BV2');
 
 insert overwrite directory '/user/archer/output' select distinct(point_name) from tbl_cp_prop where (tbl_cp_prop.ref_cptype_code = 'CP-HOSPITAL-ROOM' or tbl_cp_prop.ref_cptype_code = 'CP-PRIVATE-HOSPITAL-ROOM') and tbl_cp_prop.ref_cp_code not in (select tbl_cp_tag_relation.ref_cp_code from tbl_cp_tag_relation where tbl_cp_tag_relation.flag = 'HV1.1' or tbl_cp_tag_relation.flag = 'PHV1.1' or tbl_cp_tag_relation.flag = 'PHV1.2');
 
