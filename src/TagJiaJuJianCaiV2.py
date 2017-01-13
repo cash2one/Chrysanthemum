@@ -2,10 +2,10 @@
 # coding=utf-8
 #
 # Author: Archer
-# Date: 11/Jan/2017
-# Desc: 第一阶段给家居建材的CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-#       根据prop_value app 标签对照表清洗 ../data/jiajujiancaipropvalue.csv
-# File: TagJiaJuJianCaiV1.py
+# Date: 12/Jan/2017
+# Desc: 第二阶段给家居建材的CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
+#       在阶段一清洗的基础上，根据采集点point_name和标签系统匹配情况来处理。
+# File: TagJiaJuJianCaiV2.py
 import psycopg2
 import psycopg2.extras
 import sys
@@ -37,39 +37,57 @@ def main():
     cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    # load tags
+    TagDefs = []
+    sql = "select id, name from tbl_tag_def where flag = 'JIAJU-POINT-NAME'"
+    tagDefCursor.execute(sql)
+    for tag in tagDefCursor:
+        TagDefs.append([tag['id'], tag['name']])
+
     cpTagLst = []
+    count = 0
 
-    # 载入对照表
-    PropValueTags = []
-    with open('../data/jiajujiancaipropvalue.csv') as F:
-        for line in F:
-            PropValueTags.append(line.strip().split(','))
-
-    # prop_value, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-    cpPropSql = "select e.prop_value, e.ref_cp_code from tbl_cp_prop p inner join tbl_cp_exprop e on p.ref_cp_code = e.ref_cp_code where (p.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL' or p.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT') and e.ref_exprop_code = 'EXP-CATEGORY'"
+    # point_name, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
+    cpPropSql = "select ref_cp_code, point_name from tbl_cp_prop where (ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL' or ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT') and ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'JIAJUV1')"
     cpPropCursor.execute(cpPropSql)
 
     for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
             print "Inserted", len(cpTagLst)
+            count = count + len(cpTagLst)
             cpTagLst = []
 
-        for propValueTag in PropValueTags:
-            if cpPropRow['prop_value'].replace(',', ':') == propValueTag[0]:
+        for tagDef in TagDefs:
+            if tagDef[1] in cpPropRow['point_name']:
                 tmpDict = {
                     'ref_cp_code': cpPropRow['ref_cp_code'],
-                    'ref_tag_definition_id': 1,
+                    'ref_tag_definition_id': tagDef[0],
                     'ref_area_code': None,
                     'ref_brand_code': None,
-                    'flag': 'JIAJUV1'
+                    'flag': 'JIAJUV2'
                 }
                 cpTagLst.append(tmpDict)
+                break
+            else:
+                if cpPropRow['point_name'] in tagDef[1]:
+                    tmpDict = {
+                        'ref_cp_code': cpPropRow['ref_cp_code'],
+                        'ref_tag_definition_id': tagDef[0],
+                        'ref_area_code': None,
+                        'ref_brand_code': None,
+                        'flag': 'JIAJUV2'
+                    }
+                    cpTagLst.append(tmpDict)
+                    break
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
         print "Inserted", len(cpTagLst)
+        count = count + len(cpTagLst)
         cpTagLst = []
+
+    print count
 
 if __name__ == "__main__":
 	main()
