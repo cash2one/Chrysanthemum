@@ -2,10 +2,10 @@
 # coding=utf-8
 #
 # Author: Archer
-# Date: 11/Jan/2017
-# Desc: 第一阶段给家电CP-JIADIAN-SELL taging
-#       根据prop_value app 标签对照表清洗 ../data/jiadianpropvalue.csv
-# File: TagJiaDianV1.py
+# Date: 15/Jan/2017
+# Desc: 第二阶段按照point_name字段给家电行业标注，在第一阶段的基础上
+#       在阶段一清洗的基础上，根据采集点point_name和标签系统匹配情况来处理。
+# File: TagJiaDianV2.py
 import psycopg2
 import psycopg2.extras
 import sys
@@ -37,39 +37,56 @@ def main():
     cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    cpTagLst = []
-
-    # 载入对照表
-    PropValueTags = []
-    with open('../data/jiadianpropvalue.csv') as F:
+    # load tags
+    TagDefs = []
+    with open('../data/jiadianpointname.csv') as F:
         for line in F:
-            PropValueTags.append(line.strip().split(','))
+            TagDefs.append(line.strip().split(','))
 
-    # prop_value, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-    cpPropSql = "select e.prop_value, e.ref_cp_code from tbl_cp_prop p inner join tbl_cp_exprop e on p.ref_cp_code = e.ref_cp_code where p.ref_cptype_code = 'CP-JIADIAN-SELL' and e.ref_exprop_code = 'EXP-CATEGORY'"
+    cpTagLst = []
+    count = 0
+
+    # point_name, CP-JIADIAN-SELL
+    cpPropSql = "select ref_cp_code, point_name from tbl_cp_prop where ref_cptype_code = 'CP-JIADIAN-SELL' and ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'JIADIANV1')"
     cpPropCursor.execute(cpPropSql)
 
     for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
             print "Inserted", len(cpTagLst)
+            count = count + len(cpTagLst)
             cpTagLst = []
 
-        for propValueTag in PropValueTags:
-            if cpPropRow['prop_value'].replace(',', ':') == propValueTag[0]:
+        for tagDef in TagDefs:
+            if tagDef[0] in cpPropRow['point_name']:
                 tmpDict = {
                     'ref_cp_code': cpPropRow['ref_cp_code'],
                     'ref_tag_definition_id': 1,
                     'ref_area_code': None,
                     'ref_brand_code': None,
-                    'flag': 'JIADIANV1'
+                    'flag': 'JIADIANV2'
                 }
                 cpTagLst.append(tmpDict)
+                break
+            else:
+                if cpPropRow['point_name'] in tagDef[0]:
+                    tmpDict = {
+                        'ref_cp_code': cpPropRow['ref_cp_code'],
+                        'ref_tag_definition_id': 1,
+                        'ref_area_code': None,
+                        'ref_brand_code': None,
+                        'flag': 'JIADIANV2'
+                    }
+                    cpTagLst.append(tmpDict)
+                    break
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
         print "Inserted", len(cpTagLst)
+        count = count + len(cpTagLst)
         cpTagLst = []
+
+    print count
 
 if __name__ == "__main__":
 	main()
