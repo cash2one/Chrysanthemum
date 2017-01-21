@@ -4,7 +4,7 @@
 # Author: Archer
 # Date: 12/Jan/2017
 # Desc: 第二阶段给家居建材的CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-#       在阶段一清洗的基础上，根据采集点point_name和标签系统匹配情况来处理。
+#       在阶段一清洗的基础上，根据家居建材TOP品牌来处理。
 # File: TagJiaJuJianCaiV2.py
 import psycopg2
 import psycopg2.extras
@@ -25,6 +25,19 @@ def insertCPTag(conn, cursor, data):
 
 	return True
 
+def isInLstReverse(Lst, query):
+    if len(query) == 0:
+        return False
+
+    for l in Lst:
+        if len(l) == 0:
+            continue
+
+        if l not in query:
+            # print 'isInLstReverse', query, l
+            return False
+
+    return True
 
 def main():
     connStr = "host='127.0.0.1' dbname='jmtool20161229' user='postgres' password='postgres'"
@@ -37,20 +50,27 @@ def main():
     cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # load tags
-    TagDefs = []
-    sql = "select id, name from tbl_tag_def where flag = 'JIAJU-POINT-NAME'"
-    tagDefCursor.execute(sql)
-    for tag in tagDefCursor:
-        TagDefs.append([tag['id'], tag['name']])
+    # load 品牌, 对于带有/的标签要分开，这样能更好的进行字符匹配
+    Brands = []
+    with open('../data/家居建材TOP品牌.txt') as F:
+        for line in F:
+            tmpLst = line.strip().split(',')
+            if tmpLst[1] == '':
+                continue
+            row = []
+            row.extend(tmpLst[0].split('/'))
+            row.append(tmpLst[1])
+            Brands.append(row)
+
+    print 'loaded 家居建材TOP品牌.txt'
 
     cpTagLst = []
     count = 0
 
-    # point_name, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-    cpPropSql = "select ref_cp_code, point_name from tbl_cp_prop where (ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL' or ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT') and ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'JIAJUV1')"
+    # point_name, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT, 且审核通过的
+    cpPropSql = "select cp.ref_cp_code, cp.point_name from tbl_cp p inner join tbl_cp_prop cp on p.point_code = cp.ref_cp_code inner join tbl_user_task_brief b on b.ref_area_code = p.ref_area_code where (cp.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL' or cp.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT') and cp.ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'JIAJUV1') and (b.status_result = 1045 or b.status_result = 106 or b.status_result = 107)"
     cpPropCursor.execute(cpPropSql)
-
+    print '载入感兴趣的点'
     for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
@@ -58,28 +78,18 @@ def main():
             count = count + len(cpTagLst)
             cpTagLst = []
 
-        for tagDef in TagDefs:
-            if tagDef[1] in cpPropRow['point_name']:
+        # 只要检测Brands里面的内容组合是否在point_name里面即可
+        for brand in Brands:
+            if isInLstReverse(brand, cpPropRow['point_name']):
                 tmpDict = {
                     'ref_cp_code': cpPropRow['ref_cp_code'],
-                    'ref_tag_definition_id': tagDef[0],
+                    'ref_tag_definition_id': 1,
                     'ref_area_code': None,
                     'ref_brand_code': None,
                     'flag': 'JIAJUV2'
                 }
                 cpTagLst.append(tmpDict)
                 break
-            else:
-                if cpPropRow['point_name'] in tagDef[1]:
-                    tmpDict = {
-                        'ref_cp_code': cpPropRow['ref_cp_code'],
-                        'ref_tag_definition_id': tagDef[0],
-                        'ref_area_code': None,
-                        'ref_brand_code': None,
-                        'flag': 'JIAJUV2'
-                    }
-                    cpTagLst.append(tmpDict)
-                    break
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))

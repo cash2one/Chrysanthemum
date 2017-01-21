@@ -2,10 +2,10 @@
 # coding=utf-8
 #
 # Author: Archer
-# Date: 11/Jan/2017
-# Desc: 第一阶段给家居建材的CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-#       根据prop_value app 标签对照表清洗 ../data/jiajujiancaipropvalue.csv
-# File: TagJiaJuJianCaiV1.py
+# Date: 12/Jan/2017
+# Desc: 第二阶段给家居建材的CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
+#       在阶段一二清洗的基础上，根据采集点point_name和标签系统匹配情况来处理。
+# File: TagJiaJuJianCaiV3.py
 import psycopg2
 import psycopg2.extras
 import sys
@@ -25,6 +25,33 @@ def insertCPTag(conn, cursor, data):
 
 	return True
 
+def isInLst(Lst, query):
+    if len(query) == 0:
+        return False
+
+    for l in Lst:
+        if len(l) == 0:
+            continue
+
+        if query in l:
+            # print 'isInLst', query, l
+            return True
+
+    return False
+
+def isInLstReverse(Lst, query):
+    if len(query) == 0:
+        return False
+
+    for l in Lst:
+        if len(l) == 0:
+            continue
+
+        if l in query:
+            # print 'isInLstReverse', query, l
+            return True
+
+    return False
 
 def main():
     connStr = "host='127.0.0.1' dbname='jmtool20161229' user='postgres' password='postgres'"
@@ -37,40 +64,46 @@ def main():
     cpTagCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cpTagResCursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    # load tags
+    TagDefs = []
+    sql = "select id, descriptions from tbl_tag_def where flag = 'JIAJU-POINT-NAME'"
+    tagDefCursor.execute(sql)
+    for tag in tagDefCursor:
+        TagDefs.append(tag['descriptions'].split(','))
+
     cpTagLst = []
+    count = 0
 
-    # 载入对照表
-    PropValueTags = []
-    with open('../data/jiajujiancaipropvalue.csv') as F:
-        for line in F:
-            PropValueTags.append(line.strip().split(','))
-
-    # prop_value, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT，且审核通过的
-    cpPropSql = "select e.prop_value, e.ref_cp_code from tbl_cp_prop p inner join tbl_cp_exprop e on p.ref_cp_code = e.ref_cp_code inner join tbl_cp cp on cp.point_code = p.ref_cp_code inner join tbl_user_task_brief b on b.ref_area_code = cp.ref_area_code where (p.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL' or p.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT') and e.ref_exprop_code = 'EXP-CATEGORY' and (b.status_result = 1045 or b.status_result = 106 or b.status_result = 107)"
+    # point_name, CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT, 且审核通过的
+    cpPropSql = "select cp.ref_cp_code, cp.point_name from tbl_cp p inner join tbl_cp_prop cp on p.point_code = cp.ref_cp_code inner join tbl_user_task_brief b on b.ref_area_code = p.ref_area_code where (cp.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL' or cp.ref_cptype_code = 'CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT') and cp.ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'JIAJUV1' or flag = 'JIAJUV2') and (b.status_result = 1045 or b.status_result = 106 or b.status_result = 107)"
     cpPropCursor.execute(cpPropSql)
 
     for cpPropRow in cpPropCursor:
         if len(cpTagLst) >= 100:
             insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
             print "Inserted", len(cpTagLst)
+            count = count + len(cpTagLst)
             cpTagLst = []
 
-        for propValueTag in PropValueTags:
-            if propValueTag[0] in cpPropRow['prop_value'].replace(',', ':'):
-            # if cpPropRow['prop_value'].replace(',', ':') == propValueTag[0]:
+        for tagDef in TagDefs:
+            if isInLstReverse(tagDef, cpPropRow['point_name']):
                 tmpDict = {
                     'ref_cp_code': cpPropRow['ref_cp_code'],
                     'ref_tag_definition_id': 1,
                     'ref_area_code': None,
                     'ref_brand_code': None,
-                    'flag': 'JIAJUV1'
+                    'flag': 'JIAJUV3'
                 }
                 cpTagLst.append(tmpDict)
+                break
 
     if len(cpTagLst) > 0:
         insertCPTag(conn, cpTagCursor, tuple(cpTagLst))
         print "Inserted", len(cpTagLst)
+        count = count + len(cpTagLst)
         cpTagLst = []
+
+    print count
 
 if __name__ == "__main__":
 	main()
