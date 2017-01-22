@@ -87,18 +87,27 @@ def isInCpTagRelation(conn, cursor, ref_cp_code, tagId):
         return False
 
 def isInLst(Lst, query):
+    if len(query) == 0:
+        return False
+
     for l in Lst:
         if query in l:
-            return (True, Lst[0])
+            return True
 
-    return (False, False)
+    return False
 
 def isInLstReverse(Lst, query):
-    for l in Lst:
-        if l in query:
-            return (True, Lst[0])
+    if len(query) == 0:
+        return False
 
-    return (False, False)
+    for l in Lst:
+        if len(l) == 0:
+            continue
+
+        if l in query:
+            return True
+
+    return False
 
 def main():
     connStr = "host='127.0.0.1' dbname='jmtool20161229' user='postgres' password='postgres'"
@@ -114,13 +123,13 @@ def main():
     cpTagLst = []
 
     TagDefs = []
-    tagDefCursor.execute("select * from tbl_tag_def where flag = 'HOSPITAL'")
+    tagDefCursor.execute("select id, name, descriptions from tbl_tag_def where flag = 'HOSPITAL'")
     for tagDefRtv in tagDefCursor:
         TagDefs.append([tagDefRtv['id'], tagDefRtv['name'], tagDefRtv['descriptions']])
 
 
     # point_name, ROOM, 审核通过的
-    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name, e.prop_value, e.ref_cp_code from tbl_cp_prop p inner join tbl_cp_exprop e on p.ref_cp_code = e.ref_cp_code inner join tbl_cp cp on cp.point_code = p.ref_cp_code inner join tbl_user_task_brief b on b.ref_area_code = cp.ref_area_code where (p.ref_cptype_code = 'CP-HOSPITAL-ROOM' or p.ref_cptype_code = 'CP-PRIVATE-HOSPITAL-ROOM') and e.ref_exprop_code = 'EXP-HOSIPITAL-ROOM' and p.ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'HV1') and (b.status_result = 1045 or b.status_result = 106 or b.status_result = 107)"
+    cpPropSql = "select cp.point_code, cp.ref_area_code, p.point_name from tbl_cp_prop p inner join tbl_cp cp on cp.point_code = p.ref_cp_code inner join tbl_user_task_brief b on b.ref_area_code = cp.ref_area_code where (p.ref_cptype_code = 'CP-HOSPITAL-ROOM' or p.ref_cptype_code = 'CP-PRIVATE-HOSPITAL-ROOM') and p.ref_cp_code not in (select ref_cp_code from tbl_cp_tag_relation where flag = 'HV1') and (b.status_result = 1045 or b.status_result = 106 or b.status_result = 107)"
     cpPropCursor.execute(cpPropSql)
     print '查询完毕'
     for cpPropRow in cpPropCursor:
@@ -133,9 +142,12 @@ def main():
         for tagDef in TagDefs:
             tmpLst = tagDef[2].split(',')
 
-            rtvReverse = isInLstReverse(tmpLst, cpPropRow['point_name']) # point_name中包含科室
+            rtvReverse = isInLstReverse(tmpLst, cpPropRow['point_name'].upper()) # point_name中包含科室
+            # if cpPropRow['point_name'] == '儿科第四诊室':
+            #     print cpPropRow['point_name'], tmpLst, rtvReverse
+            #     sys.exit(1)
 
-            if rtvReverse[0]:
+            if rtvReverse:
                 tmpDict = {
                     'ref_cp_code': cpPropRow['point_code'],
                     'ref_tag_definition_id': tagDef[0],
@@ -146,8 +158,8 @@ def main():
                 cpTagLst.append(tmpDict)
                 break
             else:
-                rtv = isInLst(tmpLst, cpPropRow['point_name']) # 科室中包含point_name
-                if rtv[0]:
+                rtv = isInLst(tmpLst, cpPropRow['point_name'].upper()) # 科室中包含point_name
+                if rtv:
                     tmpDict = {
                         'ref_cp_code': cpPropRow['point_code'],
                         'ref_tag_definition_id': tagDef[0],

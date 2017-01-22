@@ -3,7 +3,7 @@
 #
 # Author: Archer
 # Date: 11/Jan/2017
-# Desc: 第一阶段给医院的CP-HOSPITAL-ROOM
+# Desc: 第一阶段给医院的CP-HOSPITAL-ROOM, CP-PRIVATE-HOSPITAL-ROOM
 #       根据prop_value app 标签对照表清洗 ../data/jiajujiancaipropvalue.csv
 # File: TagHospitalV1.py
 import psycopg2
