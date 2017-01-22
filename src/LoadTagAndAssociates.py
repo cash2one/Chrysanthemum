@@ -25,9 +25,9 @@ for row in mat:
     id = idx
     name = row[0]
     descriptions = ','.join(row)
-    sql = "insert into tbl_tag_def (id, name, descriptions) values (" + str(id) + ", '" + name + "', '" + descriptions + "')"
+    sql = "insert into tbl_tag_def (id, name, descriptions, flag) values (" + str(id) + ", '" + name + "', '" + descriptions + "', 'HOSPITAL')"
     print sql
     tagDefCursor.execute(sql)
     conn.commit()
-    
+
     idx = idx + 1
