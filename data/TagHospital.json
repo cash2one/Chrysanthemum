@@ -1,273 +1,606 @@
 {
   "type": "PROP_VALUE",
-  "name": "综合医院",
+  "name": "医院",
   "data": {
     "type": "PROP_NAME",
-    "name": "品类",
+    "name": "一级科室",
     "data": [
       {
         "type": "PROP_VALUE",
-        "name": "内科",
-        "data": [
-          {
-            "type": "PROP_NAME",
-            "name": "类别",
-            "data": [
-              {
-                "type": "PROP_VALUE",
-                "name": "呼吸内科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "消化内科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "泌尿内科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "心内科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "神经内科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "内分泌科"
-              }
-            ]
-          }
-        ]
+        "name": "全科",
+        "descriptions": "全科、护理科、护理、护士、维护、老年科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
-        "name": "外科",
-        "data": [
-          {
-            "type": "PROP_NAME",
-            "name": "类别",
-            "data": [
-              {
-                "type": "PROP_VALUE",
-                "name": "普外科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "神经外科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "肝胆外科"
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "泌尿外科"
-              }
-            ]
-          }
-        ]
+        "name": "急诊科",
+        "descriptions": "急诊、诊室、处置室、清创、专家诊室、发热",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "门诊科",
+        "descriptions": "门诊、候诊",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "住院科",
+        "descriptions": "住院、康复、语言认知、语言治疗、病床、病房、入院",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "儿科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "妇科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "肝病科",
-        "data": [
-        ]
+        "descriptions": "儿、儿科、儿科综合、小儿内科、小儿外科、儿童营养保健科、小儿、儿童、GMS",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "男科",
-        "data": [
-        ]
+        "descriptions": "男、男科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "妇科",
+        "descriptions": "妇科、流产",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "生殖医学科",
+        "descriptions": "生殖、生殖中心、生殖医学、不孕不育、人工受精",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "妇产科",
-        "data": [
-        ]
+        "descriptions": "妇产、产科、计划生育科、遗传咨询科、产前检查科、妇幼保健、IVF（试管婴儿）、孕妇、产前、爱婴、产房、分娩、高危妊娠",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "骨科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "眼科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "口腔科",
-        "data": [
-        ]
+        "descriptions": "骨、骨外科、关节、软伤科、脊柱、正脊、牵引、颈肩腰腿、颈椎",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "皮肤科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "美容",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "中医科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "血液科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "传染科",
-        "data": [
-        ]
-      },
-      {
-        "type": "PROP_VALUE",
-        "name": "感染科",
-        "data": [
-        ]
+        "descriptions": "皮、皮科、肤、性病科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "烧伤科",
-        "data": [
-        ]
+        "descriptions": "烧伤",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
-        "name": "耳鼻喉科",
-        "data": [
-        ]
+        "name": "血液科",
+        "descriptions": "血液、血液内科、抽血、采血、血库、输血、贫血、白血病、血友病、血小板异常、过敏性紫癜、骨髓异常",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "肝病科",
+        "descriptions": "肝病、甲肝、乙肝",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "感染科",
+        "descriptions": "感染、院感",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "传染科",
+        "descriptions": "传染、艾滋病、HIV、传染危重室、寄生虫、结核病、慢病",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "美容整形科",
+        "descriptions": "美容、整形、整形外科、激光治疗",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "中医科",
+        "descriptions": "中医",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "针灸推拿科",
-        "data": [
-        ]
+        "descriptions": "针灸、推拿、按摩、针推",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
-        "name": "心里咨询室",
-        "data": [
-        ]
+        "name": "心理咨询室",
+        "descriptions": "心理、精防",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
-        "name": "检查化验类",
-        "data": [
-          {
-            "type": "PROP_NAME",
-            "name": "类别",
-            "data": [
-              {
-                "type": "PROP_VALUE",
-                "name": "B超室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "CT室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "ECT室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "血透室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "病理室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "拍片室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "手术室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "生化室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "检验室",
-                "data": []
-              },
-              {
-                "type": "PROP_VALUE",
-                "name": "磁共振室",
-                "data": []
-              }
-            ]
-          }
-        ]
+        "name": "精神病科",
+        "descriptions": "精神、精神病患",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "预防保健科",
+        "descriptions": "预防保健、疫苗、接种、候种、保健、保健科、冷链、健康教育、健康管理、治未病",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "临床科室",
+        "descriptions": "临床、营养科、GCP、高压氧",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "肿瘤科",
+        "descriptions": "	肿瘤、软组织肿瘤、体表肿瘤、胆道肿瘤、甲状腺瘤、腹膜肿瘤、乳腺肿瘤、肿瘤内科、肿瘤外科、肿瘤妇科、放疗科、肿瘤康复科、肿瘤综合科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "手术室",
-        "data": [
-        ]
+        "descriptions": "手术、抢救、急救、麻醉",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "重症监护室",
-        "data": [
-        ]
+        "descriptions": "重症、ICU、监护重症、ICU、监护",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "VIP",
+        "descriptions": "VIP、贵宾",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "体检科",
+        "descriptions": "体检、体检科、体检室、五官",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "眼科",
+              "descriptions": "眼、眼科、配镜、激光近视、近视"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "耳鼻喉科",
+              "descriptions": "耳鼻喉、耳鼻咽喉、助听、测听、喉镜、耳炎、鼻内镜"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "口腔科",
+              "descriptions": "口腔、牙齿、牙片、牙"
+            }
+          ]
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "内科",
+        "descriptions": "普通内科、老年病内科、透析科、变态反应科、免疫科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "呼吸内科",
+              "descriptions": "呼吸、肺、肺炎、肺心病、支气管炎、慢性阻塞性肺疾病、肺结核、肺癌、胸膜炎、感冒、肺栓塞、雾化"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "消化内科",
+              "descriptions": "消化、消化内镜、呼气试验、ERCP、腹泻、食管、胃、胃肠、胃十二指肠疾病、胃下垂、胃炎、胃溃疡、胃癌、胃穿孔、小肠、大肠、肝、胆、胰腺、急性腹痛、腹水、消化道出血、食管炎、急性胃炎、功能性便秘、急慢性肠炎、消化系统疾病、消化道出血"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "心内科",
+              "descriptions": "心绞痛、猝死、心律失常、心力衰竭、早搏、心律不齐、心肌梗死、心肌病、心肌炎、心肌梗塞、心电、心电图、心超、冠心病"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "内分泌科",
+              "descriptions": "内分泌、肥胖、肥胖症、骨质疏松、痛风、脂质代谢紊乱、垂体、肾上腺、性腺"
+            }
+          ]
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "外科",
+        "descriptions": "胸外科、肠疗、肛肠、肛肠外科、器官移植、微创外科、注射、输液、配液、外治、心胸外科、心胸、疼痛、观察、观摩、体外",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "普外科",
+              "descriptions": "普通外科、肠梗阻、肠疾病、肠痉挛、结肠癌、直肠、直肠癌、结肠炎、阑尾炎、腹膜疾病、腹膜炎、酒精肝、痔疮、肛裂、肛瘘、肛周脓肿、直肠肛管疾病、周围血管病、丹毒、淋巴结炎、静脉曲张、淋巴管疾病、胰腺癌、胰腺疾病、胰腺炎、腹痛、肾结石、坏死性"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "肝胆外科",
+              "descriptions": "肝胆、肝胆外科、胆结石、胆囊息肉、胆系疾病、胆囊炎、肝癌、肝腹水、肝囊肿、肝移植、肝硬化、肝脏介入、酒精肝、布卡综合症、肝血管瘤、腹腔镜"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "乳腺外科",
+              "descriptions": "乳腺、乳腺外科、乳腺炎、乳腺增生、乳腺癌、乳腺疾病、乳腺纤维瘤、乳房、乳病、乳科、乳透"
+            }
+          ]
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "神经科",
+        "descriptions": "神经功能、肌电图、TCD",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "神经内科",
+              "descriptions": "脑电、脑病、脑病中心、偏头痛、脑部炎症性疾病（脑炎、脑膜炎）、脊髓炎、痴呆、神经系统变性病、代谢病和遗传病、三叉神经痛、坐骨神经病、周围神经病（四肢麻木、无力）、重症肌无力"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "神经外科",
+              "descriptions": "神经外科、功能神经外科、脑外科"
+            }
+          ]
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "泌尿科",
+        "descriptions": "泌尿",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "泌尿内科",
+              "descriptions": "肾内科、肾、膀胱镜、内窥镜、内窥"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "泌尿外科",
+              "descriptions": "泌尿外科、碎石、结石"
+            }
+          ]
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "放射科",
+        "descriptions": "放射、影像、电疗、理疗、CR、DR、MR、MRI、PAC、PCR",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "ECT室",
+              "descriptions": "ECT、ETC"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "CT室",
+              "descriptions": "CT"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "拍片室",
+              "descriptions": "拍片"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "透视室",
+              "descriptions": "透视"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "磁共振室",
+              "descriptions": "磁共振、MIR"
+            }
+          ]
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "检查化验科",
+        "descriptions": "检查、化验、超声、超声科、彩超、临检、实验、验光、治疗、DSA、光疗、介入、体液",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": [
+            {
+              "type": "PROP_VALUE",
+              "name": "B超室",
+              "descriptions": "B、B超、B超室"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "生化室",
+              "descriptions": "生化、生化室"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "检验室",
+              "descriptions": "检验、检验室"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "病理室",
+              "descriptions": "病理、病理室"
+            },
+            {
+              "type": "PROP_VALUE",
+              "name": "血透室",
+              "descriptions": "血透、血透室、血液透析"
+            }
+          ]
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "药房",
-        "data": [
-        ]
+        "descriptions": "药、药房、药剂科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "收费窗口",
-        "data": [
-        ]
+        "descriptions": "收费、挂号",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       },
       {
         "type": "PROP_VALUE",
         "name": "办公室",
-        "data": [
-        ]
+        "descriptions": "办公、办公室、医教科、院办室、病案室、宣传科、防保科、财务科、人事科、职工、会议、信息科、医保、公共卫生、综合楼、值班、调度、摄影、培训中心、客服、主任、资料",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "后勤科室",
+        "descriptions": "后勤、衣被室、洗衣间、消毒室、水电工、电脑技术室、锅炉房、木工房、仓库、物资部、设备、库房、灯光室、机房、供应、计算机、供氧、主机、储物",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "糖尿病科",
+        "descriptions": "糖尿病",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "甲状腺科",
+        "descriptions": "甲状腺、甲状腺炎、甲状腺疾病、甲减、甲状旁腺",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "甲亢科",
+        "descriptions": "甲亢",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "哮喘病科",
+        "descriptions": "哮喘",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "癫痫科",
+        "descriptions": "癫痫",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "心脑血管",
+        "descriptions": "脑血管,脑梗塞、脑出血、心血管、心血管内科、心血管外科、血管、中风",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "心脏病",
+        "descriptions": "心脏、心功能、CCU",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "高血压",
+        "descriptions": "高血压",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
+      },
+      {
+        "type": "PROP_VALUE",
+        "name": "风湿免疫科",
+        "descriptions": "风湿、风湿免疫内科",
+        "data": {
+          "type": "PROP_NAME",
+          "name": "二级科室",
+          "data": []
+        }
       }
     ]
   }
