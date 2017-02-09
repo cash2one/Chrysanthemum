@@ -4,7 +4,7 @@
 # Author: Archer
 # Date: 12/Jan/2017
 # Desc: 第三阶段给家居建材的CP-JIAJU-JIANCAI-JIADIAN-SELL CP-JIAJU-JIANCAI-JIADIAN-SELL-OUT
-#       在第一二阶段清洗的基础上，根据家居建材TOP品牌来处理。
+#       在第一二阶段清洗的基础上，根据家居建材品牌来处理。
 # File: TagJiaJuJianCaiV2.py
 import psycopg2
 import psycopg2.extras
