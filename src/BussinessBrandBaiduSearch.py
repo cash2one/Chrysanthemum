@@ -34,6 +34,12 @@ Res = []
 
 print 'Starting Loop ...'
 for brand in Brands[11545:]:
+    if len(Res) >= 100:
+        with open('../tmp/BussinessBrandBaiduSearch.txt', 'a') as F:
+            for row in Res:
+                F.write(row[0] + '\t' + row[1] + '\n')
+                print 'Done'
+
     if brand in Processed:
         continue
     if Brands.index(brand) == len(Brands) - 1:
@@ -82,7 +88,7 @@ for brand in Brands[11545:]:
     html = response.read()
     print 'Result:[' + brand + '] ', response.getcode()
     with open('../tmp/log.txt', 'a') as F:
-        F.write(brand)
+        F.write(brand + '\n')
 
     for p in pinLei:
         if p in html:
@@ -92,3 +98,8 @@ for brand in Brands[11545:]:
 
     time.sleep(random.randrange(1, 5))
     # time.sleep(0.5)
+
+with open('../tmp/BussinessBrandBaiduSearch.txt', 'a') as F:
+    for row in Res:
+        F.write(row[0] + '\t' + row[1] + '\n')
+        print 'Done'
