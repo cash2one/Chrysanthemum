@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # coding=utf-8
 #
 # Author: Archer
@@ -10,6 +10,8 @@ import urllib2
 import re
 import random
 import time
+from socket import error as socket_error
+import socket
 
 # 载入品牌
 Brands = []
@@ -39,8 +41,10 @@ for brand in Brands[11545:]:
             for row in Res:
                 F.write(row[0] + '\t' + row[1] + '\n')
                 print 'Done'
+        Res = []
 
     if brand in Processed:
+        print brand, 'Processed'
         continue
     if Brands.index(brand) == len(Brands) - 1:
         continue
@@ -76,6 +80,7 @@ for brand in Brands[11545:]:
             for row in Res:
                 F.write(row[0] + '\t' + row[1] + '\n')
                 print 'Done'
+        Res = []
         exit(0)
     except urllib2.URLError,e:
         print e.reason
@@ -83,7 +88,18 @@ for brand in Brands[11545:]:
             for row in Res:
                 F.write(row[0] + '\t' + row[1] + '\n')
                 print 'Done'
+        Res = []
         exit(0)
+    except socket.error as msg:
+        with open('../tmp/BussinessBrandBaiduSearch.txt', 'a') as F:
+            for row in Res:
+                F.write(row[0] + '\t' + row[1] + '\n')
+                print 'Done'
+        Res = []
+        print "socket error, 104", msg
+        time.sleep(180)  # socket error, 104, connection reset, 休眠
+        continue
+
 
     html = response.read()
     print 'Result:[' + brand + '] ', response.getcode()
@@ -103,3 +119,4 @@ with open('../tmp/BussinessBrandBaiduSearch.txt', 'a') as F:
     for row in Res:
         F.write(row[0] + '\t' + row[1] + '\n')
         print 'Done'
+Res = []
